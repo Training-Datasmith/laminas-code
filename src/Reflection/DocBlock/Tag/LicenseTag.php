@@ -16,13 +16,13 @@ class LicenseTag implements TagInterface, Stringable
     protected $licenseName;
 
     /** @return 'license' */
-    public function getName()
+    public function getName(): string
     {
         return 'license';
     }
 
     /** @inheritDoc */
-    public function initialize($content)
+    public function initialize($content): void
     {
         $match = [];
 

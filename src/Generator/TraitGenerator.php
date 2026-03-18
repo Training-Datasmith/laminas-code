@@ -13,10 +13,8 @@ class TraitGenerator extends ClassGenerator
 
     /**
      * Build a Code Generation Php Object from a Class Reflection
-     *
-     * @return static
      */
-    public static function fromReflection(ClassReflection $classReflection)
+    public static function fromReflection(ClassReflection $classReflection): static
     {
         // class generator
         $cg = new static($classReflection->getName());
@@ -70,9 +68,8 @@ class TraitGenerator extends ClassGenerator
      * @configkey properties
      * @configkey methods
      * @throws Exception\InvalidArgumentException
-     * @return static
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array): static
     {
         if (! isset($array['name'])) {
             throw new Exception\InvalidArgumentException(
@@ -110,25 +107,23 @@ class TraitGenerator extends ClassGenerator
      * @inheritDoc
      * @param int[]|int $flags
      */
-    public function setFlags($flags)
+    public function setFlags($flags): static
     {
         return $this;
     }
 
     /**
      * @param int $flag
-     * @return static
      */
-    public function addFlag($flag)
+    public function addFlag($flag): static
     {
         return $this;
     }
 
     /**
      * @param int $flag
-     * @return static
      */
-    public function removeFlag($flag)
+    public function removeFlag($flag): static
     {
         return $this;
     }
@@ -136,16 +131,15 @@ class TraitGenerator extends ClassGenerator
     /**
      * @inheritDoc
      */
-    public function setFinal($isFinal)
+    public function setFinal($isFinal): static
     {
         return $this;
     }
 
     /**
      * @param ?string $extendedClass
-     * @return static
      */
-    public function setExtendedClass($extendedClass)
+    public function setExtendedClass($extendedClass): static
     {
         return $this;
     }
@@ -153,7 +147,7 @@ class TraitGenerator extends ClassGenerator
     /**
      * @inheritDoc
      */
-    public function setImplementedInterfaces(array $implementedInterfaces)
+    public function setImplementedInterfaces(array $implementedInterfaces): static
     {
         return $this;
     }
@@ -161,7 +155,7 @@ class TraitGenerator extends ClassGenerator
     /**
      * @inheritDoc
      */
-    public function setAbstract($isAbstract)
+    public function setAbstract($isAbstract): static
     {
         return $this;
     }

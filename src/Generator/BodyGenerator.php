@@ -8,18 +8,14 @@ class BodyGenerator extends AbstractGenerator
 
     /**
      * @param  string $content
-     * @return BodyGenerator
      */
-    public function setContent($content)
+    public function setContent($content): static
     {
         $this->content = (string) $content;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }

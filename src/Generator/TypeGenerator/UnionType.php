@@ -13,10 +13,10 @@ use function usort;
  *
  * @psalm-immutable
  */
-final class UnionType
+final readonly class UnionType
 {
     /** @var non-empty-list<AtomicType|IntersectionType> $types sorted, at least 2 values always present */
-    private readonly array $types;
+    private array $types;
 
     /** @param non-empty-list<AtomicType|IntersectionType> $types at least 2 values needed */
     public function __construct(array $types)

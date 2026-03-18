@@ -38,9 +38,8 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
      * Get function DocBlock
      *
      * @throws Exception\InvalidArgumentException
-     * @return DocBlockReflection
      */
-    public function getDocBlock()
+    public function getDocBlock(): \Laminas\Code\Reflection\DocBlockReflection
     {
         if ('' == ($comment = $this->getDocComment())) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -61,10 +60,11 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
     #[ReturnTypeWillChange]
     public function getStartLine($includeDocComment = false)
     {
-        if ($includeDocComment) {
-            if ($this->getDocComment() != '') {
-                return $this->getDocBlock()->getStartLine();
-            }
+        if (!$includeDocComment) {
+            return parent::getStartLine();
+        }
+        if ($this->getDocComment() != '') {
+            return $this->getDocBlock()->getStartLine();
         }
 
         return parent::getStartLine();
@@ -74,9 +74,8 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
      * Get contents of function
      *
      * @param  bool   $includeDocBlock
-     * @return string
      */
-    public function getContents($includeDocBlock = true)
+    public function getContents($includeDocBlock = true): string
     {
         $fileName = $this->getFileName();
         if (false === $fileName) {
@@ -132,9 +131,8 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
      *             FQN references
      *
      * @param string $format
-     * @return array|string
      */
-    public function getPrototype($format = self::PROTOTYPE_AS_ARRAY)
+    public function getPrototype($format = self::PROTOTYPE_AS_ARRAY): string|array
     {
         $docBlock    = $this->getDocBlock();
         $return      = $docBlock->getTag('return');
@@ -171,9 +169,8 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
                 $args[] = $argsLine;
             }
             $line .= implode(', ', $args);
-            $line .= ')';
 
-            return $line;
+            return $line . ')';
         }
 
         return $prototype;
@@ -204,9 +201,8 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
      *             use more reliable tools, such as `vimeo/psalm` or `phpstan/phpstan` instead.
      *
      * @throws Exception\InvalidArgumentException
-     * @return DocBlockReflection
      */
-    public function getReturn()
+    public function getReturn(): \Laminas\Code\Reflection\DocBlockReflection
     {
         $docBlock = $this->getDocBlock();
         if (! $docBlock->hasTag('return')) {
@@ -225,7 +221,7 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
      *
      * @return string|false
      */
-    public function getBody()
+    public function getBody(): string|false
     {
         $fileName = $this->getFileName();
         if (false === $fileName) {
@@ -269,10 +265,7 @@ class FunctionReflection extends ReflectionFunction implements ReflectionInterfa
         return $body;
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return $this->__toString();
     }

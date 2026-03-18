@@ -112,7 +112,7 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      *             generate constant expressions. For such a functionality, consider using an AST-based
      *             code builder instead.
      */
-    public function initEnvironmentConstants()
+    public function initEnvironmentConstants(): void
     {
         $constants = [
             '__DIR__',
@@ -140,7 +140,7 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      * @param string $constant
      * @return $this
      */
-    public function addConstant($constant)
+    public function addConstant($constant): static
     {
         $this->constants->append($constant);
 
@@ -156,9 +156,8 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      *             code builder instead.
      *
      * @param string $constant
-     * @return bool
      */
-    public function deleteConstant($constant)
+    public function deleteConstant($constant): bool
     {
         if (($index = array_search($constant, $this->constants->getArrayCopy())) !== false) {
             $this->constants->offsetUnset($index);
@@ -182,10 +181,7 @@ class ValueGenerator extends AbstractGenerator implements Stringable
         return $this->constants;
     }
 
-    /**
-     * @return bool
-     */
-    public function isValidConstantType()
+    public function isValidConstantType(): bool
     {
         if ($this->type === self::TYPE_AUTO) {
             $type = $this->getAutoDeterminedType($this->value);
@@ -214,9 +210,8 @@ class ValueGenerator extends AbstractGenerator implements Stringable
 
     /**
      * @param  mixed $value
-     * @return ValueGenerator
      */
-    public function setValue($value)
+    public function setValue($value): static
     {
         $this->value = $value;
         return $this;
@@ -232,45 +227,36 @@ class ValueGenerator extends AbstractGenerator implements Stringable
 
     /**
      * @param  string $type
-     * @return ValueGenerator
      */
-    public function setType($type)
+    public function setType($type): static
     {
         $this->type = (string) $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
     /**
      * @param  int $arrayDepth
-     * @return ValueGenerator
      */
-    public function setArrayDepth($arrayDepth)
+    public function setArrayDepth($arrayDepth): static
     {
         $this->arrayDepth = (int) $arrayDepth;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getArrayDepth()
+    public function getArrayDepth(): int
     {
         return $this->arrayDepth;
     }
 
     /**
      * @param  string $type
-     * @return string
      */
-    protected function getValidatedType($type)
+    protected function getValidatedType($type): string
     {
         $types = [
             self::TYPE_AUTO,
@@ -314,7 +300,7 @@ class ValueGenerator extends AbstractGenerator implements Stringable
                         return self::TYPE_CONSTANT;
                     }
 
-                    if (str_contains($value, $constant)) {
+                    if (str_contains($value, (string) $constant)) {
                         return self::TYPE_CONSTANT;
                     }
                 }
@@ -341,9 +327,8 @@ class ValueGenerator extends AbstractGenerator implements Stringable
 
     /**
      * @throws Exception\RuntimeException
-     * @return string
      */
-    public function generate()
+    public function generate(): string
     {
         $type = $this->type;
 
@@ -471,13 +456,13 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      * @param  bool $quote Whether add surrounding quotes or not.
      * @return string PHP-ready code.
      */
-    public static function escape($input, $quote = true)
+    public static function escape($input, $quote = true): string
     {
         $output = addcslashes($input, "\\'");
 
         // adds quoting strings
         if ($quote) {
-            $output = "'" . $output . "'";
+            return "'" . $output . "'";
         }
 
         return $output;
@@ -487,7 +472,7 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      * @param  self::OUTPUT_* $outputMode
      * @return $this
      */
-    public function setOutputMode($outputMode)
+    public function setOutputMode($outputMode): static
     {
         $this->outputMode = (string) $outputMode;
         return $this;
@@ -496,7 +481,7 @@ class ValueGenerator extends AbstractGenerator implements Stringable
     /**
      * @return self::OUTPUT_*
      */
-    public function getOutputMode()
+    public function getOutputMode(): string
     {
         return $this->outputMode;
     }

@@ -67,7 +67,7 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
      * @param  bool $includeDocBlock
      * @return string
      */
-    public function getContents($includeDocBlock = true)
+    public function getContents($includeDocBlock = true): string|false
     {
         $fileName = $this->getFileName();
 
@@ -194,10 +194,7 @@ class ClassReflection extends ReflectionClass implements ReflectionInterface
         );
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return parent::__toString();
     }

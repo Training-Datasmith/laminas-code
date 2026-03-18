@@ -4,18 +4,12 @@ namespace Laminas\Code\Generator\DocBlock\Tag;
 
 class ThrowsTag extends AbstractTypeableTag implements TagInterface
 {
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'throws';
     }
 
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         return '@throws'
         . (! empty($this->types) ? ' ' . $this->getTypesAsString() : '')

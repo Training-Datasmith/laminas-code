@@ -31,10 +31,8 @@ class DocBlockGenerator extends AbstractGenerator
 
     /**
      * Build a DocBlock generator object from a reflection object
-     *
-     * @return DocBlockGenerator
      */
-    public static function fromReflection(DocBlockReflection $reflectionDocBlock)
+    public static function fromReflection(DocBlockReflection $reflectionDocBlock): static
     {
         $docBlock = new static();
 
@@ -61,9 +59,8 @@ class DocBlockGenerator extends AbstractGenerator
      * @configkey longdescription  string The long description for this doc block
      * @configkey tags             array
      * @throws Exception\InvalidArgumentException
-     * @return DocBlockGenerator
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array): static
     {
         $docBlock = new static();
 
@@ -85,10 +82,7 @@ class DocBlockGenerator extends AbstractGenerator
         return $docBlock;
     }
 
-    /**
-     * @return TagManager
-     */
-    protected static function getTagManager()
+    protected static function getTagManager(): \Laminas\Code\Generator\DocBlock\TagManager
     {
         if (! isset(static::$tagManager)) {
             static::$tagManager = new TagManager();
@@ -115,47 +109,32 @@ class DocBlockGenerator extends AbstractGenerator
         }
     }
 
-    /**
-     * @param  string $shortDescription
-     * @return DocBlockGenerator
-     */
-    public function setShortDescription($shortDescription)
+    public function setShortDescription(string $shortDescription): static
     {
         $this->shortDescription = $shortDescription;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getShortDescription()
+    public function getShortDescription(): string
     {
         return $this->shortDescription;
     }
 
-    /**
-     * @param  string $longDescription
-     * @return DocBlockGenerator
-     */
-    public function setLongDescription($longDescription)
+    public function setLongDescription(string $longDescription): static
     {
         $this->longDescription = $longDescription;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLongDescription()
+    public function getLongDescription(): string
     {
         return $this->longDescription;
     }
 
     /**
      * @param  array[]|TagInterface[] $tags
-     * @return DocBlockGenerator
      */
-    public function setTags(array $tags)
+    public function setTags(array $tags): static
     {
         foreach ($tags as $tag) {
             $this->setTag($tag);
@@ -167,9 +146,8 @@ class DocBlockGenerator extends AbstractGenerator
     /**
      * @param array|TagInterface $tag
      * @throws Exception\InvalidArgumentException
-     * @return DocBlockGenerator
      */
-    public function setTag($tag)
+    public function setTag($tag): static
     {
         if (is_array($tag)) {
             // use deprecated Tag class for backward compatibility to old array-keys
@@ -191,25 +169,21 @@ class DocBlockGenerator extends AbstractGenerator
     /**
      * @return TagInterface[]
      */
-    public function getTags()
+    public function getTags(): array
     {
         return $this->tags;
     }
 
     /**
      * @param bool $value
-     * @return DocBlockGenerator
      */
-    public function setWordWrap($value)
+    public function setWordWrap($value): static
     {
         $this->wordwrap = (bool) $value;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getWordWrap()
+    public function getWordWrap(): bool
     {
         return $this->wordwrap;
     }
@@ -241,9 +215,8 @@ class DocBlockGenerator extends AbstractGenerator
 
     /**
      * @param  string $content
-     * @return string
      */
-    protected function docCommentize($content)
+    protected function docCommentize($content): string
     {
         $indent  = $this->getIndentation();
         $output  = $indent . '/**' . self::LINE_FEED;
@@ -256,8 +229,7 @@ class DocBlockGenerator extends AbstractGenerator
             }
             $output .= self::LINE_FEED;
         }
-        $output .= $indent . ' */' . self::LINE_FEED;
 
-        return $output;
+        return $output . ($indent . ' */' . self::LINE_FEED);
     }
 }

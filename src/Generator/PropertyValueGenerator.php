@@ -6,10 +6,7 @@ class PropertyValueGenerator extends ValueGenerator
 {
     protected int $arrayDepth = 1;
 
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         return parent::generate() . ';';
     }

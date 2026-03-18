@@ -69,18 +69,16 @@ class PrototypeClassFactory
 
     /**
      * @param string $name
-     * @return string
      */
-    protected function normalizeName($name)
+    protected function normalizeName($name): string
     {
         return str_replace(['-', '_'], '', $name);
     }
 
     /**
      * @param string $name
-     * @return bool
      */
-    public function hasPrototype($name)
+    public function hasPrototype($name): bool
     {
         $name = $this->normalizeName($name);
         return isset($this->prototypes[$name]);

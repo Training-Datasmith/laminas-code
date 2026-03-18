@@ -22,13 +22,13 @@ use function str_starts_with;
 use function substr;
 
 /** @psalm-immutable */
-final class TypeGenerator implements GeneratorInterface, Stringable
+final readonly class TypeGenerator implements GeneratorInterface, Stringable
 {
     private const NULL_MARKER = '?';
 
     private function __construct(
-        private readonly UnionType|IntersectionType|AtomicType $type,
-        private readonly bool $nullable = false
+        private UnionType|IntersectionType|AtomicType $type,
+        private bool $nullable = false
     ) {
         if ($nullable && $type instanceof AtomicType) {
             $type->assertCanBeStandaloneNullable();

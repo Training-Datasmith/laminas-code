@@ -123,10 +123,7 @@ class ParameterReflection extends ReflectionParameter implements ReflectionInter
         return null;
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return parent::__toString();
     }

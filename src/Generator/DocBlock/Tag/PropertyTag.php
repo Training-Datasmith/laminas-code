@@ -23,19 +23,15 @@ class PropertyTag extends AbstractTypeableTag implements TagInterface
         parent::__construct($types, $description);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'property';
     }
 
     /**
      * @param string $propertyName
-     * @return self
      */
-    public function setPropertyName($propertyName)
+    public function setPropertyName($propertyName): static
     {
         $this->propertyName = ltrim($propertyName, '$');
         return $this;
@@ -49,10 +45,7 @@ class PropertyTag extends AbstractTypeableTag implements TagInterface
         return $this->propertyName;
     }
 
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         return '@property'
             . (! empty($this->types) ? ' ' . $this->getTypesAsString() : '')

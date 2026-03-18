@@ -15,10 +15,8 @@ class InterfaceGenerator extends ClassGenerator
 
     /**
      * Build a Code Generation Php Object from a Class Reflection
-     *
-     * @return static
      */
-    public static function fromReflection(ClassReflection $classReflection)
+    public static function fromReflection(ClassReflection $classReflection): static
     {
         if (! $classReflection->isInterface()) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -79,9 +77,8 @@ class InterfaceGenerator extends ClassGenerator
      * @configkey constants
      * @configkey methods
      * @throws Exception\InvalidArgumentException
-     * @return static
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array): static
     {
         if (! isset($array['name'])) {
             throw new Exception\InvalidArgumentException(
@@ -116,7 +113,7 @@ class InterfaceGenerator extends ClassGenerator
     }
 
     /** @inheritDoc */
-    public function addPropertyFromGenerator(PropertyGenerator $property)
+    public function addPropertyFromGenerator(PropertyGenerator $property): static
     {
         return $this;
     }
@@ -130,13 +127,13 @@ class InterfaceGenerator extends ClassGenerator
     }
 
     /** @inheritDoc */
-    public function setExtendedClass($extendedClass)
+    public function setExtendedClass($extendedClass): static
     {
         return $this;
     }
 
     /** @inheritDoc */
-    public function setAbstract($isAbstract)
+    public function setAbstract($isAbstract): static
     {
         return $this;
     }

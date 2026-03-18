@@ -19,13 +19,13 @@ class ParamTag implements TagInterface, PhpDocTypedTagInterface
     protected $description;
 
     /** @return 'param' */
-    public function getName()
+    public function getName(): string
     {
         return 'param';
     }
 
     /** @inheritDoc */
-    public function initialize($content)
+    public function initialize($content): void
     {
         $matches = [];
 
@@ -40,7 +40,7 @@ class ParamTag implements TagInterface, PhpDocTypedTagInterface
         }
 
         if (isset($matches[3])) {
-            $this->description = trim(preg_replace('#\s+#', ' ', $matches[3]));
+            $this->description = trim((string) preg_replace('#\s+#', ' ', $matches[3]));
         }
     }
 

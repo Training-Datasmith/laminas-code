@@ -19,10 +19,10 @@ use function usort;
  *
  * @psalm-immutable
  */
-final class IntersectionType
+final readonly class IntersectionType
 {
     /** @var non-empty-list<AtomicType> sorted, at least 2 values always present */
-    private readonly array $types;
+    private array $types;
 
     /**
      * @param non-empty-list<AtomicType> $types at least 2 values needed

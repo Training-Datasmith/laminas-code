@@ -15,16 +15,13 @@ class ReturnTag implements TagInterface, PhpDocTypedTagInterface
     /** @var string|null */
     protected $description;
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'return';
     }
 
     /** @inheritDoc */
-    public function initialize($content)
+    public function initialize($content): void
     {
         $matches = [];
         if (! preg_match('#((?:[\w|\\\]+(?:\[\])*\|?)+)(?:\s+(.*))?#s', $content, $matches)) {
@@ -34,7 +31,7 @@ class ReturnTag implements TagInterface, PhpDocTypedTagInterface
         $this->types = explode('|', $matches[1]);
 
         if (isset($matches[2])) {
-            $this->description = trim(preg_replace('#\s+#', ' ', $matches[2]));
+            $this->description = trim((string) preg_replace('#\s+#', ' ', $matches[2]));
         }
     }
 

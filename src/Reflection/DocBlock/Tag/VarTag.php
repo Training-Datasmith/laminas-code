@@ -16,13 +16,11 @@ class VarTag implements TagInterface, PhpDocTypedTagInterface, Stringable
      * @var string[]
      * @psalm-var list<string>
      */
-    private $types = [];
+    private array $types = [];
 
-    /** @var string|null */
-    private $variableName;
+    private ?string $variableName = null;
 
-    /** @var string|null */
-    private $description;
+    private ?string $description = null;
 
     /** @inheritDoc */
     public function getName(): string

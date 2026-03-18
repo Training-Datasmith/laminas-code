@@ -19,10 +19,7 @@ class ReturnTag extends AbstractTypeableTag implements TagInterface
         return $tagManager->createTagFromReflection($reflectionTag);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'return';
     }
@@ -48,10 +45,7 @@ class ReturnTag extends AbstractTypeableTag implements TagInterface
         return $this->getTypesAsString();
     }
 
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         return '@return '
         . $this->getTypesAsString()

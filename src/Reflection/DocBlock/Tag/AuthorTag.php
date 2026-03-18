@@ -16,13 +16,13 @@ class AuthorTag implements TagInterface, Stringable
     protected $authorEmail;
 
     /** @return 'author' */
-    public function getName()
+    public function getName(): string
     {
         return 'author';
     }
 
     /** @inheritDoc */
-    public function initialize($content)
+    public function initialize($content): void
     {
         $match = [];
 

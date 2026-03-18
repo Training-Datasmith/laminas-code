@@ -141,9 +141,8 @@ class DocBlockScanner
 
     /**
      * @phpcs:disable Generic.Formatting.MultipleStatementAlignment.NotSame
-     * @return array
      */
-    protected function tokenize()
+    protected function tokenize(): array
     {
         static $CONTEXT_INSIDE_DOCBLOCK = 0x01;
         static $CONTEXT_INSIDE_ASTERISK = 0x02;
@@ -163,7 +162,7 @@ class DocBlockScanner
             &$currentChar,
             &$currentWord,
             &$currentLine
-        ) {
+        ): false|string {
             $positionsForward = $positionsForward > 0 ? $positionsForward : 1;
             $streamIndex      = $streamIndex === null ? 0 : $streamIndex + $positionsForward;
             if (! isset($stream[$streamIndex])) {
@@ -187,28 +186,25 @@ class DocBlockScanner
             return $currentChar;
         };
         $MACRO_STREAM_ADVANCE_WORD       = function () use (&$currentWord, &$MACRO_STREAM_ADVANCE_CHAR) {
-            return $MACRO_STREAM_ADVANCE_CHAR(strlen($currentWord));
+            return $MACRO_STREAM_ADVANCE_CHAR(strlen((string) $currentWord));
         };
         $MACRO_STREAM_ADVANCE_LINE       = function () use (&$currentLine, &$MACRO_STREAM_ADVANCE_CHAR) {
-            return $MACRO_STREAM_ADVANCE_CHAR(strlen($currentLine));
+            return $MACRO_STREAM_ADVANCE_CHAR(strlen((string) $currentLine));
         };
-        $MACRO_TOKEN_ADVANCE             = function () use (&$tokenIndex, &$tokens) {
+        $MACRO_TOKEN_ADVANCE             = function () use (&$tokenIndex, &$tokens): void {
             $tokenIndex          = $tokenIndex === null ? 0 : $tokenIndex + 1;
             $tokens[$tokenIndex] = ['DOCBLOCK_UNKNOWN', ''];
         };
-        $MACRO_TOKEN_SET_TYPE            = function ($type) use (&$tokenIndex, &$tokens) {
+        $MACRO_TOKEN_SET_TYPE            = function ($type) use (&$tokenIndex, &$tokens): void {
             $tokens[$tokenIndex][0] = $type;
         };
-        $MACRO_TOKEN_APPEND_CHAR         = function () use (&$currentChar, &$tokens, &$tokenIndex) {
+        $MACRO_TOKEN_APPEND_CHAR         = function () use (&$currentChar, &$tokens, &$tokenIndex): void {
             $tokens[$tokenIndex][1] .= $currentChar;
         };
-        $MACRO_TOKEN_APPEND_WORD         = function () use (&$currentWord, &$tokens, &$tokenIndex) {
+        $MACRO_TOKEN_APPEND_WORD         = function () use (&$currentWord, &$tokens, &$tokenIndex): void {
             $tokens[$tokenIndex][1] .= $currentWord;
         };
-        $MACRO_TOKEN_APPEND_WORD_PARTIAL = function ($length) use (&$currentWord, &$tokens, &$tokenIndex) {
-            $tokens[$tokenIndex][1] .= substr($currentWord, 0, $length);
-        };
-        $MACRO_TOKEN_APPEND_LINE         = function () use (&$currentLine, &$tokens, &$tokenIndex) {
+        $MACRO_TOKEN_APPEND_LINE         = function () use (&$currentLine, &$tokens, &$tokenIndex): void {
             $tokens[$tokenIndex][1] .= $currentLine;
         };
 

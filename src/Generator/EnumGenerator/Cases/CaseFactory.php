@@ -29,9 +29,8 @@ final class CaseFactory
      *          cases: array<non-empty-string, string>,
      *      },
      * } $options
-     * @return BackedCases|PureCases
      */
-    public static function fromOptions(array $options)
+    public static function fromOptions(array $options): \Laminas\Code\Generator\EnumGenerator\Cases\PureCases|\Laminas\Code\Generator\EnumGenerator\Cases\BackedCases
     {
         if (array_key_exists('pureCases', $options) && ! array_key_exists('backedCases', $options)) {
             return PureCases::fromCases($options['pureCases']);
@@ -41,10 +40,7 @@ final class CaseFactory
         return BackedCases::fromCasesWithType($options['backedCases']['cases'], $options['backedCases']['type']);
     }
 
-    /**
-     * @return BackedCases|PureCases
-     */
-    public static function fromReflectionCases(ReflectionEnum $enum)
+    public static function fromReflectionCases(ReflectionEnum $enum): \Laminas\Code\Generator\EnumGenerator\Cases\PureCases|\Laminas\Code\Generator\EnumGenerator\Cases\BackedCases
     {
         $backingType = $enum->getBackingType();
 

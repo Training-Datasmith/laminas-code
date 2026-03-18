@@ -19,16 +19,13 @@ class PropertyTag implements TagInterface, PhpDocTypedTagInterface, Stringable
     /** @var string|null */
     protected $description;
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'property';
     }
 
     /** @inheritDoc */
-    public function initialize($content)
+    public function initialize($content): void
     {
         $match = [];
         if (! preg_match('#^(.+)?(\$[\S]+)[\s]*(.*)$#m', $content, $match)) {

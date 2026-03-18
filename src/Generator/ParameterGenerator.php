@@ -24,10 +24,7 @@ class ParameterGenerator extends AbstractGenerator
 
     private bool $omitDefaultValue = false;
 
-    /**
-     * @return ParameterGenerator
-     */
-    public static function fromReflection(ParameterReflection $reflectionParameter)
+    public static function fromReflection(ParameterReflection $reflectionParameter): \Laminas\Code\Generator\ParameterGenerator
     {
         $param = new ParameterGenerator();
 
@@ -72,9 +69,8 @@ class ParameterGenerator extends AbstractGenerator
      * @configkey sourcecontent         string
      * @configkey omitdefaultvalue      bool
      * @throws Exception\InvalidArgumentException
-     * @return ParameterGenerator
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array): static
     {
         if (! isset($array['name'])) {
             throw new Exception\InvalidArgumentException(
@@ -147,19 +143,14 @@ class ParameterGenerator extends AbstractGenerator
         }
     }
 
-    /**
-     * @param  string $type
-     * @return ParameterGenerator
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = TypeGenerator::fromTypeString($type);
 
         return $this;
     }
 
-    /** @return string|null */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type
             ? $this->type->__toString()
@@ -168,18 +159,14 @@ class ParameterGenerator extends AbstractGenerator
 
     /**
      * @param  string $name
-     * @return ParameterGenerator
      */
-    public function setName($name)
+    public function setName($name): static
     {
         $this->name = (string) $name;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -190,9 +177,8 @@ class ParameterGenerator extends AbstractGenerator
      * Certain variables are difficult to express
      *
      * @param  mixed $defaultValue
-     * @return ParameterGenerator
      */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue($defaultValue): static
     {
         if ($this->variadic) {
             throw new Exception\InvalidArgumentException('Variadic parameter cannot have a default value');
@@ -205,45 +191,34 @@ class ParameterGenerator extends AbstractGenerator
         return $this;
     }
 
-    /**
-     * @return ?ValueGenerator
-     */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?\Laminas\Code\Generator\ValueGenerator
     {
         return $this->defaultValue;
     }
 
     /**
      * @param  int $position
-     * @return ParameterGenerator
      */
-    public function setPosition($position)
+    public function setPosition($position): static
     {
         $this->position = (int) $position;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->position;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPassedByReference()
+    public function getPassedByReference(): bool
     {
         return $this->passedByReference;
     }
 
     /**
      * @param  bool $passedByReference
-     * @return ParameterGenerator
      */
-    public function setPassedByReference($passedByReference)
+    public function setPassedByReference($passedByReference): static
     {
         $this->passedByReference = (bool) $passedByReference;
         return $this;
@@ -251,9 +226,8 @@ class ParameterGenerator extends AbstractGenerator
 
     /**
      * @param bool $variadic
-     * @return ParameterGenerator
      */
-    public function setVariadic($variadic)
+    public function setVariadic($variadic): static
     {
         $this->variadic = (bool) $variadic;
 
@@ -264,18 +238,12 @@ class ParameterGenerator extends AbstractGenerator
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getVariadic()
+    public function getVariadic(): bool
     {
         return $this->variadic;
     }
 
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         $output = $this->generateTypeHint();
 
@@ -302,10 +270,7 @@ class ParameterGenerator extends AbstractGenerator
         return $output;
     }
 
-    /**
-     * @return string
-     */
-    private function generateTypeHint()
+    private function generateTypeHint(): string
     {
         if (null === $this->type) {
             return '';
@@ -314,10 +279,7 @@ class ParameterGenerator extends AbstractGenerator
         return $this->type->generate() . ' ';
     }
 
-    /**
-     * @return ParameterGenerator
-     */
-    public function omitDefaultValue(bool $omit = true)
+    public function omitDefaultValue(bool $omit = true): static
     {
         $this->omitDefaultValue = $omit;
 

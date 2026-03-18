@@ -7,10 +7,10 @@ namespace Laminas\Code\Generator\EnumGenerator\Cases;
  *
  * @psalm-immutable
  */
-final class PureCases
+final readonly class PureCases
 {
     /** @param list<non-empty-string> $cases */
-    private function __construct(public readonly array $cases)
+    private function __construct(public array $cases)
     {
     }
 

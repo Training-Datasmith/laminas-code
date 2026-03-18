@@ -23,8 +23,7 @@ class DocBlockReflection implements ReflectionInterface
     /** @var string */
     protected $docComment;
 
-    /** @var DocBlockTagManager */
-    protected $tagManager;
+    protected ?\Laminas\Code\Reflection\DocBlock\TagManager $tagManager;
 
     /** @var int */
     protected $startLine;
@@ -80,7 +79,7 @@ class DocBlockReflection implements ReflectionInterface
             $this->docComment = $commentOrReflector->getDocComment();
 
             // determine line numbers
-            $lineCount       = substr_count($this->docComment, "\n");
+            $lineCount       = substr_count((string) $this->docComment, "\n");
             $this->startLine = $this->reflector->getStartLine() - $lineCount - 1;
             $this->endLine   = $this->reflector->getStartLine() - 1;
         } elseif (is_string($commentOrReflector)) {
@@ -163,9 +162,8 @@ class DocBlockReflection implements ReflectionInterface
      * Does the DocBlock contain the given annotation tag?
      *
      * @param  string $name
-     * @return bool
      */
-    public function hasTag($name)
+    public function hasTag($name): bool
     {
         $this->reflect();
         foreach ($this->tags as $tag) {
@@ -232,26 +230,23 @@ class DocBlockReflection implements ReflectionInterface
         $docComment = preg_replace('#[ ]{0,1}\*/$#', '', $this->docComment);
 
         // create a clean docComment
-        $this->cleanDocComment = preg_replace("#[ \t]*(?:/\*\*|\*/|\*)[ ]{0,1}(.*)?#", '$1', $docComment);
+        $this->cleanDocComment = preg_replace("#[ \t]*(?:/\*\*|\*/|\*)[ ]{0,1}(.*)?#", '$1', (string) $docComment);
 
         // @todo should be changed to remove first and last empty line
-        $this->cleanDocComment = ltrim($this->cleanDocComment, "\r\n");
+        $this->cleanDocComment = ltrim((string) $this->cleanDocComment, "\r\n");
 
         $scanner                = new DocBlockScanner($docComment);
         $this->shortDescription = ltrim($scanner->getShortDescription());
         $this->longDescription  = ltrim($scanner->getLongDescription());
 
         foreach ($scanner->getTags() as $tag) {
-            $this->tags[] = $this->tagManager->createTag(ltrim($tag['name'], '@'), ltrim($tag['value']));
+            $this->tags[] = $this->tagManager->createTag(ltrim((string) $tag['name'], '@'), ltrim((string) $tag['value']));
         }
 
         $this->isReflected = true;
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         $str  = 'DocBlock [ /* DocBlock */ ] {' . "\n\n";
         $str .= '  - Tags [' . count($this->tags) . '] {' . "\n";
@@ -261,9 +256,8 @@ class DocBlockReflection implements ReflectionInterface
         }
 
         $str .= '  }' . "\n";
-        $str .= '}' . "\n";
 
-        return $str;
+        return $str . ('}' . "\n");
     }
 
     /**

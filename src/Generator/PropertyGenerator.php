@@ -45,8 +45,7 @@ class PropertyGenerator extends AbstractMemberGenerator
         }
     }
 
-    /** @return static */
-    public static function fromReflection(PropertyReflection $reflectionProperty)
+    public static function fromReflection(PropertyReflection $reflectionProperty): static
     {
         $property = new static();
 
@@ -109,10 +108,9 @@ class PropertyGenerator extends AbstractMemberGenerator
      * @configkey omitdefaultvalue   bool
      * @configkey readonly           bool
      * @configkey type               null|TypeGenerator
-     * @return static
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array): static
     {
         if (! isset($array['name'])) {
             throw new Exception\InvalidArgumentException(
@@ -184,9 +182,8 @@ class PropertyGenerator extends AbstractMemberGenerator
 
     /**
      * @param  bool  $const
-     * @return PropertyGenerator
      */
-    public function setConst($const)
+    public function setConst($const): static
     {
         if (true === $const) {
             $this->setFlags(self::FLAG_CONSTANT);
@@ -199,10 +196,7 @@ class PropertyGenerator extends AbstractMemberGenerator
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isConst()
+    public function isConst(): bool
     {
         return (bool) ($this->flags & self::FLAG_CONSTANT);
     }
@@ -241,10 +235,7 @@ class PropertyGenerator extends AbstractMemberGenerator
         return parent::setFlags($flags);
     }
 
-    /**
-     * @return ?PropertyValueGenerator
-     */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?\Laminas\Code\Generator\PropertyValueGenerator
     {
         return $this->defaultValue;
     }
@@ -253,13 +244,12 @@ class PropertyGenerator extends AbstractMemberGenerator
      * @param  PropertyValueGenerator|mixed     $defaultValue
      * @param  PropertyValueGenerator::TYPE_*   $defaultValueType
      * @param  PropertyValueGenerator::OUTPUT_* $defaultValueOutputMode
-     * @return static
      */
     public function setDefaultValue(
         $defaultValue,
         $defaultValueType = PropertyValueGenerator::TYPE_AUTO,
         $defaultValueOutputMode = PropertyValueGenerator::OUTPUT_MULTIPLE_LINE
-    ) {
+    ): static {
         if (! $defaultValue instanceof PropertyValueGenerator) {
             $defaultValue = new PropertyValueGenerator($defaultValue, $defaultValueType, $defaultValueOutputMode);
         }
@@ -270,11 +260,10 @@ class PropertyGenerator extends AbstractMemberGenerator
     }
 
     /**
-     * @return string
      * @psalm-return non-empty-string
      * @throws Exception\RuntimeException
      */
-    public function generate()
+    public function generate(): string
     {
         $name         = $this->getName();
         $defaultValue = $this->getDefaultValue();
@@ -319,10 +308,7 @@ class PropertyGenerator extends AbstractMemberGenerator
         return $output . ' = ' . ($defaultValue !== null ? $defaultValue->generate() : 'null;');
     }
 
-    /**
-     * @return PropertyGenerator
-     */
-    public function omitDefaultValue(bool $omit = true)
+    public function omitDefaultValue(bool $omit = true): static
     {
         $this->omitDefaultValue = $omit;
 

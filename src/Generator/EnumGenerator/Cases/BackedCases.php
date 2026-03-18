@@ -12,13 +12,13 @@ use function sprintf;
  *
  * @psalm-immutable
  */
-final class BackedCases
+final readonly class BackedCases
 {
     /**
      * @param 'int'|'string'         $type
      * @param list<non-empty-string> $cases
      */
-    private function __construct(public readonly string $type, public readonly array $cases)
+    private function __construct(public string $type, public array $cases)
     {
     }
 

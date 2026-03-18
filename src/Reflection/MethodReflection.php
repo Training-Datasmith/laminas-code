@@ -42,7 +42,7 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
      *
      * @return DocBlockReflection|false
      */
-    public function getDocBlock()
+    public function getDocBlock(): false|\Laminas\Code\Reflection\DocBlockReflection
     {
         if ('' == $this->getDocComment()) {
             return false;
@@ -60,10 +60,11 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
     #[ReturnTypeWillChange]
     public function getStartLine($includeDocComment = false)
     {
-        if ($includeDocComment) {
-            if ($this->getDocComment() != '') {
-                return $this->getDocBlock()->getStartLine();
-            }
+        if (!$includeDocComment) {
+            return parent::getStartLine();
+        }
+        if ($this->getDocComment() != '') {
+            return $this->getDocBlock()->getStartLine();
         }
 
         return parent::getStartLine();
@@ -160,9 +161,8 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
                 $args[] = $argsLine;
             }
             $line .= implode(', ', $args);
-            $line .= ')';
 
-            return $line;
+            return $line . ')';
         }
 
         return $prototype;
@@ -189,15 +189,13 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
      * Get method contents
      *
      * @param  bool $includeDocBlock
-     * @return string
      */
-    public function getContents($includeDocBlock = true)
+    public function getContents($includeDocBlock = true): string
     {
         $docComment = $this->getDocComment();
         $content    = $includeDocBlock && ! empty($docComment) ? $docComment . "\n" : '';
-        $content   .= $this->extractMethodContents();
 
-        return $content;
+        return $content . $this->extractMethodContents();
     }
 
     /**
@@ -214,9 +212,8 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
      * Tokenize method string and return concatenated body
      *
      * @param bool $bodyOnly
-     * @return string
      */
-    protected function extractMethodContents($bodyOnly = false)
+    protected function extractMethodContents($bodyOnly = false): string
     {
         $fileName = $this->getFileName();
 
@@ -336,11 +333,9 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
     /**
      * Take current position and find any whitespace
      *
-     * @param array $haystack
      * @param int $position
-     * @return string
      */
-    protected function extractPrefixedWhitespace($haystack, $position)
+    protected function extractPrefixedWhitespace(array $haystack, $position): string
     {
         $content = '';
         $count   = count($haystack);
@@ -366,11 +361,9 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
     /**
      * Test for ending brace
      *
-     * @param array $haystack
      * @param int $position
-     * @return bool|null
      */
-    protected function isEndingBrace($haystack, $position)
+    protected function isEndingBrace(array $haystack, $position): ?bool
     {
         $count = count($haystack);
 
@@ -436,12 +429,11 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
      * Test to see if current position is valid function or
      * closure.  Returns true if it's a function and NOT a closure
      *
-     * @param array $haystack
      * @param int $position
      * @param string $functionName
      * @return bool
      */
-    protected function isValidFunction($haystack, $position, $functionName = null)
+    protected function isValidFunction(array $haystack, $position, $functionName = null)
     {
         $isValid = false;
         $count   = count($haystack);
@@ -467,10 +459,7 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
         return $isValid;
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return parent::__toString();
     }

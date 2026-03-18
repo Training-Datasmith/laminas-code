@@ -42,16 +42,15 @@ class AuthorTag extends AbstractGenerator implements TagInterface
     }
 
     /** @return 'author' */
-    public function getName()
+    public function getName(): string
     {
         return 'author';
     }
 
     /**
      * @param string $authorEmail
-     * @return AuthorTag
      */
-    public function setAuthorEmail($authorEmail)
+    public function setAuthorEmail($authorEmail): static
     {
         $this->authorEmail = $authorEmail;
         return $this;
@@ -65,9 +64,8 @@ class AuthorTag extends AbstractGenerator implements TagInterface
 
     /**
      * @param string $authorName
-     * @return AuthorTag
      */
-    public function setAuthorName($authorName)
+    public function setAuthorName($authorName): static
     {
         $this->authorName = $authorName;
         return $this;
@@ -80,7 +78,7 @@ class AuthorTag extends AbstractGenerator implements TagInterface
     }
 
     /** @return non-empty-string */
-    public function generate()
+    public function generate(): string
     {
         return '@author'
             . (! empty($this->authorName) ? ' ' . $this->authorName : '')

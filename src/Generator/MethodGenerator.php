@@ -33,10 +33,7 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
 
     private bool $returnsReference = false;
 
-    /**
-     * @return MethodGenerator
-     */
-    public static function fromReflection(MethodReflection $reflectionMethod)
+    public static function fromReflection(MethodReflection $reflectionMethod): self
     {
         $method = static::copyMethodSignature($reflectionMethod);
 
@@ -95,9 +92,8 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
      * from all lines
      *
      * @param string $body
-     * @return string
      */
-    protected static function clearBodyIndention($body)
+    protected static function clearBodyIndention($body): string
     {
         if (empty($body)) {
             return $body;
@@ -113,9 +109,7 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
             }
         }
 
-        $body = implode("\n", $lines);
-
-        return $body;
+        return implode("\n", $lines);
     }
 
     /**
@@ -136,9 +130,8 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
      * @configkey static           bool
      * @configkey visibility       string
      * @throws Exception\InvalidArgumentException
-     * @return MethodGenerator
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array): static
     {
         if (! isset($array['name'])) {
             throw new Exception\InvalidArgumentException(
@@ -222,9 +215,8 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
 
     /**
      * @param  ParameterGenerator[]|array[]|string[] $parameters
-     * @return MethodGenerator
      */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): static
     {
         foreach ($parameters as $parameter) {
             $this->setParameter($parameter);
@@ -238,9 +230,8 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
     /**
      * @param  ParameterGenerator|array|string $parameter
      * @throws Exception\InvalidArgumentException
-     * @return MethodGenerator
      */
-    public function setParameter($parameter)
+    public function setParameter($parameter): static
     {
         if (is_string($parameter)) {
             $parameter = new ParameterGenerator($parameter);
@@ -268,34 +259,26 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
     /**
      * @return ParameterGenerator[]
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
 
-    /**
-     * @param  string $body
-     * @return MethodGenerator
-     */
-    public function setBody($body)
+    public function setBody(string $body): static
     {
         $this->body = $body;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
     /**
      * @param string|null $returnType
-     * @return MethodGenerator
      */
-    public function setReturnType($returnType = null)
+    public function setReturnType($returnType = null): static
     {
         $this->returnType = null === $returnType
             ? null
@@ -304,19 +287,15 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
         return $this;
     }
 
-    /**
-     * @return TypeGenerator|null
-     */
-    public function getReturnType()
+    public function getReturnType(): ?\Laminas\Code\Generator\TypeGenerator
     {
         return $this->returnType;
     }
 
     /**
      * @param bool $returnsReference
-     * @return MethodGenerator
      */
-    public function setReturnsReference($returnsReference)
+    public function setReturnsReference($returnsReference): static
     {
         $this->returnsReference = (bool) $returnsReference;
 
@@ -335,15 +314,12 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
     {
         uasort(
             $this->parameters,
-            static fn(ParameterGenerator $item1, ParameterGenerator $item2)
+            static fn(ParameterGenerator $item1, ParameterGenerator $item2): int
                 => $item1->getPosition() <=> $item2->getPosition()
         );
     }
 
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         $output = '';
 
@@ -394,9 +370,7 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
                 . self::LINE_FEED;
         }
 
-        $output .= $indent . '}' . self::LINE_FEED;
-
-        return $output;
+        return $output . ($indent . '}' . self::LINE_FEED);
     }
 
     public function __toString(): string

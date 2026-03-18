@@ -23,13 +23,13 @@ class MethodTag implements TagInterface, PhpDocTypedTagInterface, Stringable
     protected $isStatic = false;
 
     /** @return 'method' */
-    public function getName()
+    public function getName(): string
     {
         return 'method';
     }
 
     /** @inheritDoc */
-    public function initialize($content)
+    public function initialize($content): void
     {
         $match = [];
 

@@ -10,9 +10,9 @@ use function substr;
  *
  * @psalm-immutable
  */
-final class Name
+final readonly class Name
 {
-    private function __construct(private readonly string $name, private readonly ?string $namespace)
+    private function __construct(private string $name, private ?string $namespace)
     {
     }
 

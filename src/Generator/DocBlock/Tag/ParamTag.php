@@ -38,19 +38,15 @@ class ParamTag extends AbstractTypeableTag implements TagInterface
         return $tagManager->createTagFromReflection($reflectionTag);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'param';
     }
 
     /**
      * @param string $variableName
-     * @return ParamTag
      */
-    public function setVariableName($variableName)
+    public function setVariableName($variableName): static
     {
         $this->variableName = ltrim($variableName, '$');
         return $this;
@@ -106,10 +102,7 @@ class ParamTag extends AbstractTypeableTag implements TagInterface
         return $this->getVariableName();
     }
 
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         return '@param'
             . (! empty($this->types) ? ' ' . $this->getTypesAsString() : '')

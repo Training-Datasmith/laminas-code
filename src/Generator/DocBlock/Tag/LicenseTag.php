@@ -42,16 +42,15 @@ class LicenseTag extends AbstractGenerator implements TagInterface
     }
 
     /** @return 'license' */
-    public function getName()
+    public function getName(): string
     {
         return 'license';
     }
 
     /**
      * @param string $url
-     * @return LicenseTag
      */
-    public function setUrl($url)
+    public function setUrl($url): static
     {
         $this->url = $url;
         return $this;
@@ -65,9 +64,8 @@ class LicenseTag extends AbstractGenerator implements TagInterface
 
     /**
      * @param  string $name
-     * @return LicenseTag
      */
-    public function setLicenseName($name)
+    public function setLicenseName($name): static
     {
         $this->licenseName = $name;
         return $this;
@@ -80,7 +78,7 @@ class LicenseTag extends AbstractGenerator implements TagInterface
     }
 
     /** @return non-empty-string */
-    public function generate()
+    public function generate(): string
     {
         return '@license'
             . (! empty($this->url) ? ' ' . $this->url : '')

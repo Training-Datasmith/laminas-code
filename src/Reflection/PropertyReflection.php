@@ -39,7 +39,7 @@ class PropertyReflection extends PhpReflectionProperty implements ReflectionInte
     /**
      * @return false|DocBlockReflection
      */
-    public function getDocBlock()
+    public function getDocBlock(): false|\Laminas\Code\Reflection\DocBlockReflection
     {
         if (! ($docComment = $this->getDocComment())) {
             return false;
@@ -48,10 +48,7 @@ class PropertyReflection extends PhpReflectionProperty implements ReflectionInte
         return new DocBlockReflection($docComment);
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return $this->__toString();
     }

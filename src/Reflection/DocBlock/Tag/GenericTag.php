@@ -27,7 +27,7 @@ class GenericTag implements TagInterface, PrototypeGenericInterface, Stringable
     }
 
     /** @inheritDoc */
-    public function initialize($content)
+    public function initialize($content): void
     {
         $this->parse($content);
     }
@@ -40,9 +40,8 @@ class GenericTag implements TagInterface, PrototypeGenericInterface, Stringable
 
     /**
      * @param string $name
-     * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -54,10 +53,9 @@ class GenericTag implements TagInterface, PrototypeGenericInterface, Stringable
     }
 
     /**
-     * @param  int $position
      * @return string
      */
-    public function returnValue($position)
+    public function returnValue(int $position)
     {
         return $this->values[$position];
     }
