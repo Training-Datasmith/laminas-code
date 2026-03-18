@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator;
 
-use Laminas\Code\Reflection\ClassReflection;
-
 use function array_diff;
+
 use function array_filter;
 use function array_map;
 use function array_pop;
@@ -17,6 +18,9 @@ use function in_array;
 use function is_array;
 use function is_scalar;
 use function is_string;
+
+use Laminas\Code\Reflection\ClassReflection;
+
 use function ltrim;
 use function rtrim;
 use function sprintf;

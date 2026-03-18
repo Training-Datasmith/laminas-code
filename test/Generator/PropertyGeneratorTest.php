@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
+
+use function addslashes;
+use function array_shift;
 
 use Generator;
 use Laminas\Code\Generator\DocBlock\Tag\VarTag;
@@ -17,11 +22,10 @@ use LaminasTest\Code\Generator\TestAsset\ClassWithTypedProperty;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+
 use ReflectionProperty;
 use stdClass;
 
-use function addslashes;
-use function array_shift;
 use function str_replace;
 use function uniqid;
 

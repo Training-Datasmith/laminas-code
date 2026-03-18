@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator\DocBlock;
 
 use Laminas\Code\Generator\DocBlock\Tag\GenericTag;

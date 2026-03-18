@@ -1,11 +1,12 @@
 <?php
 
-namespace LaminasTest\Code\TestAsset;
+declare(strict_types=1);
 
-use LaminasTest\Code\TestAsset\FooTrait;
+namespace LaminasTest\Code\TestAsset;
 
 class TestClassUsesTraitSimple
 {
-    use \LaminasTest\Code\TestAsset\BarTrait, FooTrait;
+    use \LaminasTest\Code\TestAsset\BarTrait;
+    use FooTrait;
     use BazTrait;
 }

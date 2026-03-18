@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator\DocBlock;
 
 use Laminas\Code\Generator\DocBlock\Tag\TagInterface;
 use Laminas\Code\Generic\Prototype\PrototypeClassFactory;
 use Laminas\Code\Reflection\DocBlock\Tag\TagInterface as ReflectionTagInterface;
-use ReflectionClass;
-use ReflectionMethod;
 
 use function method_exists;
+
+use ReflectionClass;
+
+use ReflectionMethod;
+
 use function str_starts_with;
-use function strpos;
 use function substr;
 use function ucfirst;
 

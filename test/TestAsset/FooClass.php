@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\TestAsset;
 
 include __DIR__ . '/foo/bar/baz.php';
 
-use A\B\C;
 use A\B\C\D as E;
-use Foo\Bar\Baz as FooBarBaz;
 
 abstract class FooClass implements \ArrayAccess, E\Blarg, Local\SubClass
 {
@@ -16,7 +16,7 @@ abstract class FooClass implements \ArrayAccess, E\Blarg, Local\SubClass
     /**
      * Constant comment
      */
-    const BAZ = 'baz';
+    public const BAZ = 'baz';
 
     protected static $bar = 'value';
     public $foo = 'value2';

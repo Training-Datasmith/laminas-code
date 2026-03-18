@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Code\Generator;
+declare(strict_types=1);
 
-use Reflection;
-use ReflectionMethod;
+namespace Laminas\Code\Generator;
 
 use function array_key_exists;
 use function array_search;
+
 use function array_values;
 use function count;
 use function current;
@@ -15,9 +15,12 @@ use function implode;
 use function in_array;
 use function is_array;
 use function is_string;
+
+use Reflection;
+use ReflectionMethod;
+
 use function sprintf;
 use function str_contains;
-use function strpos;
 
 /** @psalm-type Visibility = ReflectionMethod::IS_PRIVATE|ReflectionMethod::IS_PROTECTED|ReflectionMethod::IS_PUBLIC */
 class TraitUsageGenerator extends AbstractGenerator implements TraitUsageInterface

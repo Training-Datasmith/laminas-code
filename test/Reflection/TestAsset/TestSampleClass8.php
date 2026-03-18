@@ -1,11 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection\TestAsset;
-
-use Laminas\Config as LaminasConfig;
-use FooBar\Foo\Bar;
-use One\Two\Three\Four\Five as ottff;
-
 
 class TestSampleClass8
 {

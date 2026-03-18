@@ -1,24 +1,28 @@
 <?php
 
-namespace LaminasTest\Code\Generator;
+declare(strict_types=1);
 
-use Laminas\Code\Exception\InvalidArgumentException;
-use Laminas\Code\Generator\GeneratorInterface;
-use Laminas\Code\Generator\TypeGenerator;
-use Laminas\Code\Generator\TypeGenerator\AtomicType;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
+namespace LaminasTest\Code\Generator;
 
 use function array_combine;
 use function array_filter;
 use function array_map;
 use function class_implements;
+
+use Laminas\Code\Exception\InvalidArgumentException;
+use Laminas\Code\Generator\GeneratorInterface;
+use Laminas\Code\Generator\TypeGenerator;
+use Laminas\Code\Generator\TypeGenerator\AtomicType;
+
 use function ltrim;
+
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
+
 use function str_replace;
 use function str_starts_with;
-use function strpos;
 
 #[Group('zendframework/zend-code#29')]
 #[CoversClass(TypeGenerator::class)]
@@ -234,7 +238,7 @@ class TypeGeneratorTest extends TestCase
     {
         return array_filter(
             $this->validType(),
-            static fn(array $pair) => str_starts_with($pair[1], '\\')
+            static fn (array $pair) => str_starts_with($pair[1], '\\')
         );
     }
 

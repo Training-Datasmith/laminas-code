@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\TestAsset;
 
 class IterableHintsClass extends EmptyClass
@@ -16,11 +18,11 @@ class IterableHintsClass extends EmptyClass
     {
     }
 
-    public function iterableReturnValue() : iterable
+    public function iterableReturnValue(): iterable
     {
     }
 
-    public function nullableIterableReturnValue() : ?iterable
+    public function nullableIterableReturnValue(): ?iterable
     {
     }
 }

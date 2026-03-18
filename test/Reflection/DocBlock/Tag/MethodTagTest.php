@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection\DocBlock\Tag;
 
 use Laminas\Code\Reflection\DocBlock\Tag\MethodTag;

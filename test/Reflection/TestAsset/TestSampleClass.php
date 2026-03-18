@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * License Info
  *
@@ -17,5 +19,4 @@ namespace LaminasTest\Code\Reflection\TestAsset;
  */
 class TestSampleClass extends \ArrayObject
 {
-
 }

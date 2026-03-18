@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\TestAsset;
 
 class ObjectHintsClass extends EmptyClass
@@ -16,11 +18,11 @@ class ObjectHintsClass extends EmptyClass
     {
     }
 
-    public function objectReturnValue() : object
+    public function objectReturnValue(): object
     {
     }
 
-    public function nullableObjectReturnValue() : ?object
+    public function nullableObjectReturnValue(): ?object
     {
     }
 }

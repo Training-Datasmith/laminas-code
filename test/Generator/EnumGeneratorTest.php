@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
 
-use InvalidArgumentException;
+use function class_exists;
+
 use Laminas\Code\Generator\EnumGenerator\EnumGenerator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use ReflectionEnum;
 
-use function class_exists;
+use ReflectionEnum;
 
 final class EnumGeneratorTest extends TestCase
 {

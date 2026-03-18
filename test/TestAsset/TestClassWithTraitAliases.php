@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\TestAsset;
 
 require_once __DIR__ . '/TraitWithSameMethods.php';

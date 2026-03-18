@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator\DocBlock\Tag;
 
-use Laminas\Code\Generator\AbstractGenerator;
-
 use function explode;
+
 use function implode;
 use function is_string;
+
+use Laminas\Code\Generator\AbstractGenerator;
 
 /**
  * This abstract class can be used as parent for all tags

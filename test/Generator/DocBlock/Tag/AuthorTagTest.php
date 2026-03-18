@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator\DocBlock\Tag;
 
 use Laminas\Code\Generator\DocBlock\Tag\AuthorTag;

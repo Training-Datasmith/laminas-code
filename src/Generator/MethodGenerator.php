@@ -1,19 +1,25 @@
 <?php
 
-namespace Laminas\Code\Generator;
+declare(strict_types=1);
 
-use Laminas\Code\Reflection\MethodReflection;
-use Stringable;
+namespace Laminas\Code\Generator;
 
 use function array_map;
 use function explode;
+
 use function implode;
 use function is_array;
 use function is_string;
+
+use Laminas\Code\Reflection\MethodReflection;
+
 use function preg_replace;
 use function sprintf;
 use function str_replace;
 use function str_starts_with;
+
+use Stringable;
+
 use function strlen;
 use function strtolower;
 use function substr;
@@ -314,7 +320,7 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
     {
         uasort(
             $this->parameters,
-            static fn(ParameterGenerator $item1, ParameterGenerator $item2): int
+            static fn (ParameterGenerator $item1, ParameterGenerator $item2): int
                 => $item1->getPosition() <=> $item2->getPosition()
         );
     }

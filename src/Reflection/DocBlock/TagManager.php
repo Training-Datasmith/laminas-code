@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection\DocBlock;
 
 use Laminas\Code\Generic\Prototype\PrototypeClassFactory;

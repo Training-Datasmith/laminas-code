@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection;
 
 use Closure;
@@ -9,12 +11,14 @@ use LaminasTest\Code\Reflection\TestAsset\ClassWithPromotedParameter;
 use LaminasTest\Code\TestAsset\ClassTypeHintedClass;
 use LaminasTest\Code\TestAsset\DocBlockOnlyHintsClass;
 use LaminasTest\Code\TestAsset\InternalHintsClass;
+
+use const PHP_VERSION_ID;
+
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use ReflectionType;
 
-use const PHP_VERSION_ID;
+use ReflectionType;
 
 #[Group('Laminas_Reflection')]
 #[Group('Laminas_Reflection_Parameter')]

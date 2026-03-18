@@ -1,15 +1,20 @@
 <?php
 
-namespace Laminas\Code\Generator\TypeGenerator;
+declare(strict_types=1);
 
-use Laminas\Code\Generator\Exception\InvalidArgumentException;
-use ReflectionClass;
-use ReflectionNamedType;
+namespace Laminas\Code\Generator\TypeGenerator;
 
 use function array_key_exists;
 use function assert;
 use function implode;
+
+use Laminas\Code\Generator\Exception\InvalidArgumentException;
+
 use function preg_match;
+
+use ReflectionClass;
+use ReflectionNamedType;
+
 use function sprintf;
 use function strtolower;
 use function substr;

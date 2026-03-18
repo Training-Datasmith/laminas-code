@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator\DocBlock\Tag;
 
 use LaminasTest\Code\Generator\TestAsset\TypeableTag;

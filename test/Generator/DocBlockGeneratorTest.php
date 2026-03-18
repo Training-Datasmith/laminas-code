@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
 
 use Laminas\Code\Generator\DocBlock\Tag;
@@ -188,9 +190,9 @@ EOS;
     public function testGenerateOmitsLongDescriptionWithTags(): void
     {
         $generator = new DocBlockGenerator(
-            "foo",
+            'foo',
             null,
-            [new Tag\GenericTag("var", "array")],
+            [new Tag\GenericTag('var', 'array')],
         );
 
         $expected = '/**' . DocBlockGenerator::LINE_FEED

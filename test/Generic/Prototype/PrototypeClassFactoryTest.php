@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generic\Prototype;
 
 use Laminas\Code\Generic\Prototype\PrototypeClassFactory;

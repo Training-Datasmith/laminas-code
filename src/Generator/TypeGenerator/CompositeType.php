@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Laminas\Code\Generator\TypeGenerator;
 
+use function array_map;
+
+use function explode;
+
 use Laminas\Code\Generator\Exception\InvalidArgumentException;
 
-use function array_map;
-use function explode;
 use function preg_match;
 use function sprintf;
 use function str_contains;

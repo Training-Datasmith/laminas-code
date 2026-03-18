@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection\DocBlock\Tag;
+
+use function preg_match;
 
 use Stringable;
 
-use function preg_match;
 use function trim;
 
 class LicenseTag implements TagInterface, Stringable

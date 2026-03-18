@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection\DocBlock\Tag;
 
+use function explode;
+
 use Laminas\Code\Generic\Prototype\PrototypeGenericInterface;
+
 use Stringable;
 
-use function explode;
 use function trim;
 
 class GenericTag implements TagInterface, PrototypeGenericInterface, Stringable

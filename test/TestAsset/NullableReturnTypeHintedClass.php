@@ -1,46 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\TestAsset;
 
 class NullableReturnTypeHintedClass extends EmptyClass
 {
-    public function arrayReturn() : ?array
+    public function arrayReturn(): ?array
     {
     }
 
-    public function callableReturn() : ?callable
+    public function callableReturn(): ?callable
     {
     }
 
-    public function intReturn() : ?int
+    public function intReturn(): ?int
     {
     }
 
-    public function floatReturn() : ?float
+    public function floatReturn(): ?float
     {
     }
 
-    public function stringReturn() : ?string
+    public function stringReturn(): ?string
     {
     }
 
-    public function boolReturn() : ?bool
+    public function boolReturn(): ?bool
     {
     }
 
-    public function selfReturn() : ?self
+    public function selfReturn(): ?self
     {
     }
 
-    public function parentReturn() : ?parent
+    public function parentReturn(): ?parent
     {
     }
 
-    public function classReturn() : ?NullableReturnTypeHintedClass
+    public function classReturn(): ?NullableReturnTypeHintedClass
     {
     }
 
-    public function otherClassReturn() : ?InternalHintsClass
+    public function otherClassReturn(): ?InternalHintsClass
     {
     }
 }

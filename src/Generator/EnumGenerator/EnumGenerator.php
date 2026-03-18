@@ -1,14 +1,17 @@
 <?php
 
-namespace Laminas\Code\Generator\EnumGenerator;
+declare(strict_types=1);
 
-use Laminas\Code\Generator\EnumGenerator\Cases\BackedCases;
-use Laminas\Code\Generator\EnumGenerator\Cases\CaseFactory;
-use Laminas\Code\Generator\EnumGenerator\Cases\PureCases;
-use ReflectionEnum;
+namespace Laminas\Code\Generator\EnumGenerator;
 
 use function array_map;
 use function implode;
+
+use Laminas\Code\Generator\EnumGenerator\Cases\BackedCases;
+use Laminas\Code\Generator\EnumGenerator\Cases\CaseFactory;
+
+use Laminas\Code\Generator\EnumGenerator\Cases\PureCases;
+use ReflectionEnum;
 
 /** @psalm-immutable */
 final class EnumGenerator

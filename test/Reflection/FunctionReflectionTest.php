@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection;
+
+use function array_shift;
 
 use Laminas\Code\Reflection\DocBlockReflection;
 use Laminas\Code\Reflection\Exception\InvalidArgumentException;
 use Laminas\Code\Reflection\FunctionReflection;
 use Laminas\Code\Reflection\ParameterReflection;
 use PHPUnit\Framework\Attributes\Group;
+
 use PHPUnit\Framework\TestCase;
 
-use function array_shift;
 use function trim;
 use function uniqid;
 

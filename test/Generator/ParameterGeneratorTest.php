@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
+
+use function array_combine;
+use function array_map;
+use function array_shift;
 
 use Closure;
 use Laminas\Code\Generator\Exception\InvalidArgumentException;
 use Laminas\Code\Generator\ParameterGenerator;
 use Laminas\Code\Generator\ValueGenerator;
 use Laminas\Code\Reflection\ClassReflection;
-use Laminas\Code\Reflection\MethodReflection;
 use Laminas\Code\Reflection\ParameterReflection;
 use LaminasTest\Code\Generator\TestAsset\ParameterClass;
 use LaminasTest\Code\TestAsset\ClassTypeHintedClass;
@@ -20,21 +25,19 @@ use LaminasTest\Code\TestAsset\NullNullableDefaultHintsClass;
 use LaminasTest\Code\TestAsset\ObjectHintsClass;
 use LaminasTest\Code\TestAsset\Php80Types;
 use LaminasTest\Code\TestAsset\VariadicParametersClass;
+
+use function ltrim;
+
 use Namespaced\TypeHint\Bar;
 use Phar;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use stdClass;
 
-use function array_combine;
-use function array_filter;
-use function array_map;
-use function array_shift;
-use function ltrim;
-use function strpos;
 use function strtolower;
 
 #[Group('Laminas_Code_Generator')]
@@ -455,7 +458,7 @@ class ParameterGeneratorTest extends TestCase
         // just re-organizing the keys so that the phpunit data set makes sense in errors:
         return array_combine(
             array_map(
-                static fn(array $definition) => $definition[0] . '#' . $definition[1],
+                static fn (array $definition) => $definition[0] . '#' . $definition[1],
                 $parameters
             ),
             $parameters

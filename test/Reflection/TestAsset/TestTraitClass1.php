@@ -1,23 +1,24 @@
 <?php
+
+declare(strict_types=1);
 //issue #6620
 require_once 'TestTraitClass2.php';
 class FooClass
 {
-	use TestTrait;
+    use TestTrait;
 
-	/**
-	* @var bool
-	*/
-	protected static $other = false;
+    /**
+    * @var bool
+    */
+    protected static $other = false;
 
-
-	/**
-	* Constructor
-	*
-	* @param bool $other
-	*/
-	public function __construct($other)
-	{
-		$this->other = $other;
-	}
+    /**
+    * Constructor
+    *
+    * @param bool $other
+    */
+    public function __construct($other)
+    {
+        $this->other = $other;
+    }
 }

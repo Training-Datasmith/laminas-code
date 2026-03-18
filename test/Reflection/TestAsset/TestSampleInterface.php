@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * License Info
  *
@@ -12,5 +14,4 @@ namespace LaminasTest\Code\Reflection\TestAsset;
 
 interface TestSampleInterface
 {
-
 }

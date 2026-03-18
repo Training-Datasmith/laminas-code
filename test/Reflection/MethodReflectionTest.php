@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection;
+
+use function array_shift;
 
 use Laminas\Code\Reflection\ClassReflection;
 use Laminas\Code\Reflection\MethodReflection;
 use Laminas\Code\Reflection\ParameterReflection;
 use PHPUnit\Framework\Attributes\Group;
+
 use PHPUnit\Framework\TestCase;
 
-use function array_shift;
 use function trim;
 use function uniqid;
 
@@ -173,7 +177,7 @@ CONTENTS;
         self::assertEquals($contents, $reflectionMethod->getContents(true));
         self::assertEquals($contents, $reflectionMethod->getContents());
 
-                $contents = <<<'CONTENTS'
+        $contents = <<<'CONTENTS'
 /**
      * Awesome doc block
      */

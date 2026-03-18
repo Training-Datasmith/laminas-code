@@ -7,6 +7,7 @@ namespace LaminasTest\Code\Reflection\TestAsset;
 final class ClassWithPromotedParameter
 {
     public function __construct(
-      private string $promotedParameter
-    ){}
+        private string $promotedParameter
+    ) {
+    }
 }

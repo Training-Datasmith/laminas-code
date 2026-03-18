@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code;
 
-use Laminas\Code\Exception\InvalidArgumentException;
-
 use function array_keys;
+
 use function gettype;
 use function implode;
 use function is_string;
 use function key;
+
+use Laminas\Code\Exception\InvalidArgumentException;
+
 use function lcfirst;
 use function sprintf;
 use function str_replace;

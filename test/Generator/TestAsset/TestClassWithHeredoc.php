@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator\TestAsset;
 
 class TestClassWithHeredoc
 {
+    public function someFunction()
+    {
 
-    function someFunction() {
-
-$output = <<< END
+        $output = <<< END
 
         Fix it, fix it!
         Fix it, fix it!

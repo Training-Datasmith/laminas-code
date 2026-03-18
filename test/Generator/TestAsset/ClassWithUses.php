@@ -1,10 +1,9 @@
 <?php
 
-namespace LaminasTest\Code\Generator\TestAsset;
+declare(strict_types=1);
 
-use LaminasTest\Code\Generator\TestAsset\ClassWithNamespace;
+namespace LaminasTest\Code\Generator\TestAsset;
 
 class ClassWithUses
 {
-
 }

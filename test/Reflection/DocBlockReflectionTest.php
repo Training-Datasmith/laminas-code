@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection;
 
 use Laminas\Code\Reflection\ClassReflection;

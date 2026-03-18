@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
+
+use function array_map;
+use function array_shift;
 
 use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\Exception\InvalidArgumentException;
@@ -19,13 +24,9 @@ use LaminasTest\Code\TestAsset\Php80Types;
 use LaminasTest\Code\TestAsset\ReturnTypeHintedClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+
 use PHPUnit\Framework\TestCase;
 use stdClass;
-
-use function array_filter;
-use function array_map;
-use function array_shift;
-use function array_values;
 
 #[Group('Laminas_Code_Generator')]
 #[Group('Laminas_Code_Generator_Php')]
@@ -100,7 +101,7 @@ class MethodGeneratorTest extends TestCase
 
         $params = $methodGenerator->getParameters();
 
-        $sorting = array_map(static fn(ParameterGenerator $parameter): string => $parameter->getName(), $params);
+        $sorting = array_map(static fn (ParameterGenerator $parameter): string => $parameter->getName(), $params);
 
         self::assertEquals(['foo' => 'foo', 'baz' => 'baz', 'bar' => 'bar'], $sorting);
     }

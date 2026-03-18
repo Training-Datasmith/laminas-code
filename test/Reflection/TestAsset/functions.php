@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection\TestAsset;
 
 /***
@@ -11,7 +13,6 @@ function function1()
 {
     return 'function1';
 }
-
 
 /**
  * Laminas Function Two
@@ -27,7 +28,6 @@ function function2($one, $two = 'two')
     return 'blah';
 }
 
-
 /**
  * Enter description here...
  *
@@ -40,22 +40,49 @@ function function3($one, $two = 2)
     return true;
 }
 
-function function4($arg) {
+function function4($arg)
+{
     return 'function4';
 }
 
-function function5() { return 'function5'; }
+function function5()
+{
+    return 'function5';
+}
 
 function function6()
 {
-    $closure = function() { return 'bar'; };
+    $closure = function () {
+        return 'bar';
+    };
     return 'function6';
 }
 
-$foo = 'foo'; function function7() { return 'function7'; }
+$foo = 'foo';
+function function7()
+{
+    return 'function7';
+}
 
-function function8() { return 'function8'; } function function9() { return 'function9'; }
+function function8()
+{
+    return 'function8';
+} function function9()
+{
+    return 'function9';
+}
 
-function function10() { $closure = function() { return 'function10'; }; return $closure(); } function function11() { return 'function11'; }
+function function10()
+{
+    $closure = function () {
+        return 'function10';
+    };
+    return $closure();
+} function function11()
+{
+    return 'function11';
+}
 
-function function12() {}
+function function12()
+{
+}

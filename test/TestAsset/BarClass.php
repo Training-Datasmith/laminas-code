@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\TestAsset;
 
 include __DIR__ . '/foo/bar/baz.php';
 
-use A\B\C;
 use Foo\Bar\Baz as FooBarBaz;
 
 abstract class BarClass
@@ -30,7 +31,7 @@ abstract class BarClass
         $y = 'this string';
     }
 
-    protected function four($one, $two = array([array('default')]))
+    protected function four($one, $two = [[['default']]])
     {
         // four
     }

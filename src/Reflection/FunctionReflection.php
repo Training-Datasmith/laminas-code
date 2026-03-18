@@ -1,26 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection;
+
+use function array_map;
+use function array_slice;
+use function count;
+
+use function file;
+
+use const FILE_IGNORE_NEW_LINES;
+
+use function implode;
+use function preg_match;
+use function preg_quote;
+use function preg_replace;
 
 use ReflectionFunction;
 use ReflectionParameter;
 use ReturnTypeWillChange;
 
-use function array_map;
-use function array_slice;
-use function count;
-use function file;
-use function implode;
-use function preg_match;
-use function preg_quote;
-use function preg_replace;
 use function sprintf;
 use function strlen;
 use function strrpos;
 use function substr;
-use function var_export;
 
-use const FILE_IGNORE_NEW_LINES;
+use function var_export;
 
 class FunctionReflection extends ReflectionFunction implements ReflectionInterface
 {

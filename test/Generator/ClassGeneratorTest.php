@@ -1,8 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
 
+use function current;
+
 use DateTime;
+
+use function fclose;
+use function fopen;
+use function key;
+
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\Exception\ExceptionInterface;
@@ -19,15 +28,11 @@ use LaminasTest\Code\TestAsset\FooClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
+
 use ReflectionMethod;
 use Serializable;
 use stdClass;
 use Throwable;
-
-use function current;
-use function fclose;
-use function fopen;
-use function key;
 
 #[Group('Laminas_Code_Generator')]
 #[Group('Laminas_Code_Generator_Php')]

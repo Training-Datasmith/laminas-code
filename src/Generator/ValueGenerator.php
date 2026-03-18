@@ -1,17 +1,16 @@
 <?php
 
-namespace Laminas\Code\Generator;
+declare(strict_types=1);
 
-use ArrayObject as SplArrayObject;
-use Laminas\Code\Exception\InvalidArgumentException;
-use Laminas\Stdlib\ArrayObject as StdlibArrayObject;
-use Stringable;
-use UnitEnum;
+namespace Laminas\Code\Generator;
 
 use function addcslashes;
 use function array_keys;
 use function array_merge;
 use function array_search;
+
+use ArrayObject as SplArrayObject;
+
 use function count;
 use function get_debug_type;
 use function get_defined_constants;
@@ -21,10 +20,17 @@ use function in_array;
 use function is_array;
 use function is_int;
 use function is_object;
+
+use Laminas\Code\Exception\InvalidArgumentException;
+use Laminas\Stdlib\ArrayObject as StdlibArrayObject;
+
 use function max;
 use function sprintf;
 use function str_contains;
 use function str_repeat;
+
+use Stringable;
+use UnitEnum;
 
 class ValueGenerator extends AbstractGenerator implements Stringable
 {
@@ -318,6 +324,7 @@ class ValueGenerator extends AbstractGenerator implements Stringable
                     return self::TYPE_ENUM;
                 }
                 // enums are typed as objects, so this fall through is intentional
+                // no break
             case 'resource':
             case 'unknown type':
             default:

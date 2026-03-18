@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\Code\Generator;
 
+use function array_map;
+
 use Laminas\Code\Generator\Exception\InvalidArgumentException;
 use Laminas\Code\Generator\TypeGenerator\AtomicType;
 use Laminas\Code\Generator\TypeGenerator\CompositeType;
@@ -13,12 +15,13 @@ use ReflectionClass;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionUnionType;
-use Stringable;
 
-use function array_map;
 use function sprintf;
 use function str_contains;
 use function str_starts_with;
+
+use Stringable;
+
 use function substr;
 
 /** @psalm-immutable */
@@ -51,7 +54,7 @@ final readonly class TypeGenerator implements GeneratorInterface, Stringable
         if ($type instanceof ReflectionUnionType) {
             return new self(
                 new UnionType(array_map(
-                    static fn(
+                    static fn (
                         ReflectionIntersectionType|ReflectionNamedType $type
                     ): IntersectionType|AtomicType => $type instanceof ReflectionNamedType
                         ? AtomicType::fromReflectionNamedTypeAndClass($type, $currentClass)
@@ -80,7 +83,7 @@ final readonly class TypeGenerator implements GeneratorInterface, Stringable
         ?ReflectionClass $currentClass
     ): IntersectionType {
         return new IntersectionType(array_map(
-            static fn(
+            static fn (
                 ReflectionNamedType $type
             ): AtomicType => AtomicType::fromReflectionNamedTypeAndClass($type, $currentClass),
             $intersectionType->getTypes()

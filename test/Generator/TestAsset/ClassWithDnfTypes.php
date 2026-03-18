@@ -6,6 +6,7 @@ namespace LaminasTest\Code\Generator\TestAsset;
 
 final class ClassWithDnfTypes
 {
-    public function __construct(private (ThreeInterface&TwoInterface)|OneInterface $promotedParameter) {
+    public function __construct(private (ThreeInterface&TwoInterface)|OneInterface $promotedParameter)
+    {
     }
 }

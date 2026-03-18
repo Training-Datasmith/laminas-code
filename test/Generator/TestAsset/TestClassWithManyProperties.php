@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator\TestAsset;
 
 class TestClassWithManyProperties
 {
-
-    const FOO = 'foo';
+    public const FOO = 'foo';
 
     public static $fooStaticProperty = null;
 
@@ -29,8 +30,8 @@ class TestClassWithManyProperties
         [
             'bar',
             'baz',
-            "\n"
-        ]
+            "\n",
+        ],
     ];
 
 }

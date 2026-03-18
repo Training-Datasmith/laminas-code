@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection\DocBlock\Tag;
 
-use Stringable;
-
 use function explode;
+
+use const PHP_EOL;
+
 use function preg_match;
 use function rtrim;
 
-use const PHP_EOL;
+use Stringable;
 
 class VarTag implements TagInterface, PhpDocTypedTagInterface, Stringable
 {

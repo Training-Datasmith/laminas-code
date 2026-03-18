@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator\TypeGenerator;
 
 use function array_diff_key;
@@ -23,7 +25,7 @@ final readonly class UnionType
     {
         usort(
             $types,
-            static fn(AtomicType|IntersectionType $a, AtomicType|IntersectionType $b): int => [
+            static fn (AtomicType|IntersectionType $a, AtomicType|IntersectionType $b): int => [
                 $a instanceof IntersectionType ? -1 : $a->sortIndex,
                 $a->toString(),
             ] <=> [
@@ -47,7 +49,7 @@ final readonly class UnionType
         return implode(
             '|',
             array_map(
-                static fn(AtomicType|IntersectionType $type): string => $type instanceof IntersectionType
+                static fn (AtomicType|IntersectionType $type): string => $type instanceof IntersectionType
                     ? '(' . $type->toString() . ')'
                     : $type->toString(),
                 $this->types
@@ -61,7 +63,7 @@ final readonly class UnionType
         return implode(
             '|',
             array_map(
-                static fn(AtomicType|IntersectionType $type): string => $type instanceof IntersectionType
+                static fn (AtomicType|IntersectionType $type): string => $type instanceof IntersectionType
                     ? '(' . $type->fullyQualifiedName() . ')'
                     : $type->fullyQualifiedName(),
                 $this->types

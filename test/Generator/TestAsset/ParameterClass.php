@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator\TestAsset;
 
 class ParameterClass
@@ -68,7 +70,7 @@ class ParameterClass
 
     }
 
-    const FOO = 'foo';
+    public const FOO = 'foo';
 
     public function defaultConstant($con = self::FOO)
     {

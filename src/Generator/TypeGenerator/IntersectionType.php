@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\Code\Generator\TypeGenerator;
 
-use Laminas\Code\Generator\Exception\InvalidArgumentException;
-
 use function array_diff_key;
+
 use function array_flip;
 use function array_map;
 use function implode;
+
+use Laminas\Code\Generator\Exception\InvalidArgumentException;
+
 use function sprintf;
 use function str_contains;
 use function usort;
@@ -32,7 +34,7 @@ final readonly class IntersectionType
     {
         usort(
             $types,
-            static fn(AtomicType $a, AtomicType $b): int => $a->type <=> $b->type
+            static fn (AtomicType $a, AtomicType $b): int => $a->type <=> $b->type
         );
 
         foreach ($types as $index => $atomicType) {
@@ -49,7 +51,7 @@ final readonly class IntersectionType
     {
         return implode(
             '&',
-            array_map(static fn(AtomicType $type): string => $type->toString(), $this->types)
+            array_map(static fn (AtomicType $type): string => $type->toString(), $this->types)
         );
     }
 
@@ -58,7 +60,7 @@ final readonly class IntersectionType
     {
         return implode(
             '&',
-            array_map(static fn(AtomicType $type): string => $type->fullyQualifiedName(), $this->types)
+            array_map(static fn (AtomicType $type): string => $type->fullyQualifiedName(), $this->types)
         );
     }
 

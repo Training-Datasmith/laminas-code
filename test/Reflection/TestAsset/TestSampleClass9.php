@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection\TestAsset;
 
 use LaminasTest\Code\Reflection\TestAsset\SampleAnnotation as Sample;
 
-class TestSampleClass9
-    extends Sample
-    implements \IteratorAggregate
+class TestSampleClass9 extends Sample implements \IteratorAggregate
 {
     protected $_prop1 = null;
 

@@ -1,16 +1,14 @@
 <?php
 
-namespace Laminas\Code\Generator;
+declare(strict_types=1);
 
-use Laminas\Code\DeclareStatement;
-use Laminas\Code\Exception\InvalidArgumentException;
-use Laminas\Code\Generator\Exception\ClassNotFoundException;
-use Traversable;
+namespace Laminas\Code\Generator;
 
 use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
+
 use function count;
 use function current;
 use function dirname;
@@ -19,6 +17,11 @@ use function in_array;
 use function is_array;
 use function is_string;
 use function is_writable;
+
+use Laminas\Code\DeclareStatement;
+use Laminas\Code\Exception\InvalidArgumentException;
+use Laminas\Code\Generator\Exception\ClassNotFoundException;
+
 use function method_exists;
 use function preg_match;
 use function preg_replace;
@@ -30,12 +33,16 @@ use function str_replace;
 use function strrpos;
 use function strtolower;
 use function substr;
-use function token_get_all;
 
 use const T_COMMENT;
 use const T_DOC_COMMENT;
+
 use const T_OPEN_TAG;
 use const T_WHITESPACE;
+
+use function token_get_all;
+
+use Traversable;
 
 /**
  * @psalm-type InputUses = array<
@@ -113,7 +120,7 @@ class FileGenerator extends AbstractGenerator
                     break;
                 case 'declares':
                     $fileGenerator->setDeclares(
-                        array_map(static fn($directive, $value): \Laminas\Code\DeclareStatement =>
+                        array_map(static fn ($directive, $value): \Laminas\Code\DeclareStatement =>
                             DeclareStatement::fromArray([$directive => $value]), array_keys($value), $value)
                     );
                     break;

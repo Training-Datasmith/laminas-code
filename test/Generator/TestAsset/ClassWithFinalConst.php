@@ -6,5 +6,5 @@ namespace LaminasTest\Code\Generator\TestAsset;
 
 final class ClassWithFinalConst
 {
-    final const FINAL = 'const';
+    final public const FINAL = 'const';
 }

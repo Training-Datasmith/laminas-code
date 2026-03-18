@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection;
+
+use function array_shift;
 
 use Laminas\Code\Reflection\ClassReflection;
 use Laminas\Code\Reflection\MethodReflection;
 use Laminas\Code\Reflection\PropertyReflection;
 use LaminasTest\Code\Reflection\TestAsset\TestTraitClass3;
 use PHPUnit\Framework\Attributes\Group;
+
 use PHPUnit\Framework\TestCase;
 
-use function array_shift;
 use function trim;
 use function uniqid;
 

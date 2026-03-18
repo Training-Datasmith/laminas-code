@@ -1,16 +1,18 @@
 <?php
 
-namespace Laminas\Code\Generator\EnumGenerator\Cases;
+declare(strict_types=1);
 
-use ReflectionEnum;
-use ReflectionEnumBackedCase;
-use ReflectionEnumUnitCase;
-use ReflectionNamedType;
+namespace Laminas\Code\Generator\EnumGenerator\Cases;
 
 use function array_combine;
 use function array_key_exists;
 use function array_map;
 use function assert;
+
+use ReflectionEnum;
+use ReflectionEnumBackedCase;
+use ReflectionEnumUnitCase;
+use ReflectionNamedType;
 
 /** @internal */
 final class CaseFactory
@@ -47,7 +49,7 @@ final class CaseFactory
         if ($backingType === null) {
             return PureCases::fromCases(array_map(
                 /** @return non-empty-string */
-                static fn(ReflectionEnumUnitCase $singleCase): string => $singleCase->getName(),
+                static fn (ReflectionEnumUnitCase $singleCase): string => $singleCase->getName(),
                 $enum->getCases()
             ));
         }
@@ -60,10 +62,10 @@ final class CaseFactory
             array_combine(
                 array_map(
                     /** @return non-empty-string */
-                    static fn(ReflectionEnumBackedCase $case): string => $case->getName(),
+                    static fn (ReflectionEnumBackedCase $case): string => $case->getName(),
                     $cases
                 ),
-                array_map(static fn(ReflectionEnumBackedCase $case): string|int => $case->getBackingValue(), $cases),
+                array_map(static fn (ReflectionEnumBackedCase $case): string|int => $case->getBackingValue(), $cases),
             ),
             $backingType->getName()
         );

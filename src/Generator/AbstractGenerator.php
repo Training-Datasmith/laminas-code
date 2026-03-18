@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator;
 
-use Traversable;
-
 use function get_debug_type;
+
 use function is_array;
 use function method_exists;
 use function sprintf;
+
+use Traversable;
 
 abstract class AbstractGenerator implements GeneratorInterface
 {

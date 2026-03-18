@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator\EnumGenerator\Cases;
 
 use InvalidArgumentException;
 
-use function in_array;
 use function sprintf;
 
 /**

@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
 
 use ArrayAccess;
 use ArrayObject as SplArrayObject;
 use DateTime;
+
+use function fopen;
+
 use Generator;
 use Laminas\Code\Exception\InvalidArgumentException;
 use Laminas\Code\Exception\RuntimeException;
@@ -16,9 +21,9 @@ use LaminasTest\Code\Generator\TestAsset\TestEnum;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+
 use PHPUnit\Framework\TestCase;
 
-use function fopen;
 use function str_replace;
 
 #[CoversClass(ValueGenerator::class)]

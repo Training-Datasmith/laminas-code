@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * File header here
  *
@@ -13,7 +15,6 @@ namespace LaminasTest\Code\Generator\TestAsset;
  */
 class TestSampleSingleClass
 {
-
     /**
      * Enter description here...
      *

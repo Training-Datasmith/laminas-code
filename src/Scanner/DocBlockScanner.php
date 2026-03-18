@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Scanner;
 
 use function array_key_last;
 use function array_pop;
 use function array_push;
 use function current;
-use function end;
-use function key;
 use function next;
 use function preg_match;
 use function reset;
@@ -112,6 +112,7 @@ class DocBlockScanner
                     goto SCANNER_CONTINUE;
                 }
                 //gotos no break needed
+                // no break
             case 'DOCBLOCK_TAG':
                 array_push($this->tags, [
                     'name'  => $token[1],

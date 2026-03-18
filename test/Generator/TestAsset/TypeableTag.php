@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator\TestAsset;
 
 use Laminas\Code\Generator\DocBlock\Tag\AbstractTypeableTag;
@@ -9,7 +11,7 @@ class TypeableTag extends AbstractTypeableTag implements TagInterface
 {
     public function generate()
     {
-         return '';
+        return '';
     }
 
     /**
@@ -19,6 +21,5 @@ class TypeableTag extends AbstractTypeableTag implements TagInterface
     {
         return 'typable';
     }
-
 
 }

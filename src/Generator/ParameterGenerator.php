@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator;
 
 use Laminas\Code\Reflection\ParameterReflection;

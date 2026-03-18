@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author     Pieter Wiersema <p.wiersema@allcode.nl>
  * @copyright  Copyright (c) 2011-now AllCode, https://allcode.nl

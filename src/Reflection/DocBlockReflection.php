@@ -1,17 +1,23 @@
 <?php
 
-namespace Laminas\Code\Reflection;
+declare(strict_types=1);
 
-use Laminas\Code\Reflection\DocBlock\Tag\TagInterface as DocBlockTagInterface;
-use Laminas\Code\Reflection\DocBlock\TagManager as DocBlockTagManager;
-use Laminas\Code\Scanner\DocBlockScanner;
-use Reflector;
+namespace Laminas\Code\Reflection;
 
 use function count;
 use function is_string;
+
+use Laminas\Code\Reflection\DocBlock\Tag\TagInterface as DocBlockTagInterface;
+use Laminas\Code\Reflection\DocBlock\TagManager as DocBlockTagManager;
+
+use Laminas\Code\Scanner\DocBlockScanner;
+
 use function ltrim;
 use function method_exists;
 use function preg_replace;
+
+use Reflector;
+
 use function sprintf;
 use function substr_count;
 

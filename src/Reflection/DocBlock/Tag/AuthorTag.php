@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection\DocBlock\Tag;
 
-use Stringable;
-
 use function preg_match;
+
 use function rtrim;
+
+use Stringable;
 
 class AuthorTag implements TagInterface, Stringable
 {

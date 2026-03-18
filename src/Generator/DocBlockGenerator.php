@@ -1,14 +1,18 @@
 <?php
 
-namespace Laminas\Code\Generator;
+declare(strict_types=1);
 
-use Laminas\Code\Generator\DocBlock\Tag;
-use Laminas\Code\Generator\DocBlock\Tag\TagInterface;
-use Laminas\Code\Generator\DocBlock\TagManager;
-use Laminas\Code\Reflection\DocBlockReflection;
+namespace Laminas\Code\Generator;
 
 use function explode;
 use function is_array;
+
+use Laminas\Code\Generator\DocBlock\Tag;
+use Laminas\Code\Generator\DocBlock\Tag\TagInterface;
+
+use Laminas\Code\Generator\DocBlock\TagManager;
+use Laminas\Code\Reflection\DocBlockReflection;
+
 use function sprintf;
 use function str_replace;
 use function strtolower;

@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
+
+use function explode;
+use function file_get_contents;
 
 use Laminas\Code\DeclareStatement;
 use Laminas\Code\Exception\InvalidArgumentException;
@@ -8,12 +13,10 @@ use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\Exception\ClassNotFoundException;
 use Laminas\Code\Generator\FileGenerator;
 use PHPUnit\Framework\Attributes\Group;
+
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-use function explode;
-use function file_get_contents;
-use function get_class;
 use function strlen;
 use function strpos;
 use function strrpos;

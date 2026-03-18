@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Reflection\TestAsset;
 
 use LaminasTest\Code\Reflection\TestAsset\SampleAnnotation as Sample;

@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\TestAsset {
 
-    use A\B\C as X;
-use Foo\Bar;
-use OtherThing\SomethingElse;
-use Something\More as SM;
+    use Foo\Bar;
+    use Something\More as SM;
 
     class Baz
     {
@@ -17,15 +17,11 @@ use Something\More as SM;
 
     class ExtendingSomethingMore extends SM\Blah
     {
-
     }
 
 }
 
-
 namespace {
-
-    use X\Y\Z;
 
     class Foo
     {

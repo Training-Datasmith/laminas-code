@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection;
+
+use function assert;
 
 use Laminas\Code\Reflection\DocBlock\Tag\ParamTag;
 use ReflectionClass;
@@ -8,9 +12,8 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
-use ReturnTypeWillChange;
 
-use function assert;
+use ReturnTypeWillChange;
 
 /** @psalm-immutable */
 class ParameterReflection extends ReflectionParameter implements ReflectionInterface

@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Reflection;
+
+use function array_map;
+use function array_slice;
+use function array_unshift;
+use function file;
+
+use function file_exists;
+use function implode;
 
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use ReturnTypeWillChange;
 
-use function array_map;
-use function array_slice;
-use function array_unshift;
-use function file;
-use function file_exists;
-use function implode;
 use function strstr;
 
 /**

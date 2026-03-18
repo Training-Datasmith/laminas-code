@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Code\Generator;
+
+use function current;
 
 use DateTime;
 use Laminas\Code\Generator\ClassGenerator;
@@ -18,9 +22,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 use Serializable;
-use Throwable;
 
-use function current;
+use Throwable;
 
 #[Group('Laminas_Code_Generator')]
 #[Group('Laminas_Code_Generator_Php')]
@@ -430,7 +433,7 @@ CODE;
 
     public function testCreateFromArrayWithNamespace(): void
     {
-        $namespace = "SomeNamespace";
+        $namespace = 'SomeNamespace';
 
         $classGenerator = TraitGenerator::fromArray([
             'name'          => 'SampleClass',

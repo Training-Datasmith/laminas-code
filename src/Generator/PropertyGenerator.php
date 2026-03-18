@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Code\Generator;
+
+use function array_reduce;
+
+use function get_debug_type;
+use function is_bool;
 
 use Laminas\Code\Reflection\PropertyReflection;
 
-use function array_reduce;
-use function get_debug_type;
-use function is_bool;
 use function sprintf;
 use function str_replace;
 use function strtolower;
@@ -222,7 +226,7 @@ class PropertyGenerator extends AbstractMemberGenerator
     /** @inheritDoc */
     public function setFlags($flags)
     {
-        $flags = array_reduce((array) $flags, static fn(int $a, int $b): int => $a | $b, 0);
+        $flags = array_reduce((array) $flags, static fn (int $a, int $b): int => $a | $b, 0);
 
         if ($flags & self::FLAG_READONLY && $flags & self::FLAG_STATIC) {
             throw new Exception\RuntimeException('Modifier "readonly" in combination with "static" not permitted.');

@@ -1,7 +1,8 @@
 <?php
 
-namespace LaminasTest\Code\Reflection\TestAsset;
+declare(strict_types=1);
 
+namespace LaminasTest\Code\Reflection\TestAsset;
 
 /**
  * TestSampleClass6 DocBlock Short Desc
@@ -15,7 +16,6 @@ namespace LaminasTest\Code\Reflection\TestAsset;
  */
 class TestSampleClass6
 {
-
     /**
      * Method ShortDescription
      *

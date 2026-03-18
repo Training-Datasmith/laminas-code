@@ -1,29 +1,35 @@
 <?php
 
-namespace Laminas\Code\Reflection;
+declare(strict_types=1);
 
-use ReflectionMethod as PhpReflectionMethod;
-use ReflectionParameter as PhpReflectionParameter;
-use ReturnTypeWillChange;
+namespace Laminas\Code\Reflection;
 
 use function array_key_exists;
 use function array_map;
 use function array_shift;
+
 use function array_slice;
 use function class_exists;
 use function count;
 use function file;
 use function file_exists;
+
+use const FILE_IGNORE_NEW_LINES;
+
 use function implode;
 use function is_array;
+
+use ReflectionMethod as PhpReflectionMethod;
+use ReflectionParameter as PhpReflectionParameter;
+use ReturnTypeWillChange;
+
 use function rtrim;
 use function strlen;
 use function substr;
 use function token_get_all;
 use function token_name;
-use function var_export;
 
-use const FILE_IGNORE_NEW_LINES;
+use function var_export;
 
 class MethodReflection extends PhpReflectionMethod implements ReflectionInterface
 {
