@@ -650,7 +650,7 @@
       <code>$filter</code>
     </ArgumentTypeCoercion>
     <InvalidThrow>
-      <code>Exception\ExceptionInterface</code>
+      <code>Exception\Exception_Interface</code>
     </InvalidThrow>
     <LessSpecificImplementedReturnType>
       <code>int|false</code>
@@ -2005,29 +2005,29 @@
       <code>$list3[0]</code>
     </EmptyArrayAccess>
     <InvalidArgument>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function1']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function1']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function10']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function10']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function11']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function11']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function12']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function12']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function2']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function3']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function3']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function4']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function4']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function5']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function5']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function6']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function6']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function7']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function7']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function8']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function8']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function9']]></code>
-      <code><![CDATA['LaminasTest\Code\Reflection\TestAsset\function9']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function1']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function1']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function10']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function10']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function11']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function11']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function12']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function12']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function2']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function3']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function3']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function4']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function4']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function5']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function5']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function6']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function6']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function7']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function7']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function8']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function8']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function9']]></code>
+      <code><![CDATA['Laminas_Test\Code\Reflection\Test_Asset\function9']]></code>
     </InvalidArgument>
     <MissingReturnType>
       <code>testFunctionBodyReturn</code>

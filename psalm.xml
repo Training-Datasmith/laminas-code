@@ -29,8 +29,8 @@
         <InternalClass>
             <errorLevel type="suppress">
                 <!-- the scanner internal component can be used by package internals -->
-                <referencedClass name="Laminas\Code\Generic\Prototype\PrototypeClassFactory"/>
-                <referencedClass name="Laminas\Code\Scanner\DocBlockScanner"/>
+                <referencedClass name="Laminas\Code\Generic\Prototype\Prototype_Class_Factory"/>
+                <referencedClass name="Laminas\Code\Scanner\Doc_Block_Scanner"/>
                 <!-- our tests often verify `@internal` details of our library, by design -->
                 <directory name="test"/>
             </errorLevel>
@@ -44,6 +44,6 @@
         </InternalMethod>
     </issueHandlers>
     <plugins>
-        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+        <pluginClass class="Psalm\Php_Unit_Plugin\Plugin"/>
     </plugins>
 </psalm>
