@@ -1,60 +1,39 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generator;
 
-use Laminas\Code\Reflection\ParameterReflection;
-use ReflectionException;
-
+use Laminas\Code\Reflection\Parameter_Reflection;
+use Reflection_Exception;
 use function str_replace;
 use function strtolower;
-
-class ParameterGenerator extends AbstractGenerator
+class Parameter_Generator extends Abstract_Generator
 {
     protected string $name = '';
-
-    protected ?TypeGenerator $type = null;
-
-    protected ?ValueGenerator $defaultValue = null;
-
+    protected ?Type_Generator $type = null;
+    protected ?Value_Generator $default_value = null;
     protected int $position = 0;
-
-    protected bool $passedByReference = false;
-
+    protected bool $passed_by_reference = false;
     private bool $variadic = false;
-
-    private bool $omitDefaultValue = false;
-
-    public static function fromReflection(ParameterReflection $reflectionParameter): \Laminas\Code\Generator\ParameterGenerator
+    private bool $omit_default_value = false;
+    public static function from_reflection(Parameter_Reflection $reflection_parameter): \Laminas\Code\Generator\Parameter_Generator
     {
-        $param = new ParameterGenerator();
-
-        $param->setName($reflectionParameter->getName());
-        $param->type = TypeGenerator::fromReflectionType(
-            $reflectionParameter->getType(),
-            $reflectionParameter->getDeclaringClass()
-        );
-
-        $param->setPosition($reflectionParameter->getPosition());
-
-        $variadic = $reflectionParameter->isVariadic();
-
-        $param->setVariadic($variadic);
-
-        if (! $variadic && ($reflectionParameter->isOptional() || $reflectionParameter->isDefaultValueAvailable())) {
+        $param = new Parameter_Generator();
+        $param->set_name($reflection_parameter->get_name());
+        $param->type = Type_Generator::from_reflection_type($reflection_parameter->get_type(), $reflection_parameter->get_declaring_class());
+        $param->set_position($reflection_parameter->get_position());
+        $variadic = $reflection_parameter->is_variadic();
+        $param->set_variadic($variadic);
+        if (!$variadic && ($reflection_parameter->is_optional() || $reflection_parameter->is_default_value_available())) {
             try {
-                $param->setDefaultValue($reflectionParameter->getDefaultValue());
-            } catch (ReflectionException) {
-                $param->setDefaultValue(null);
+                $param->set_default_value($reflection_parameter->get_default_value());
+            } catch (Reflection_Exception) {
+                $param->set_default_value(null);
             }
         }
-
-        $param->setPassedByReference($reflectionParameter->isPassedByReference());
-
+        $param->set_passed_by_reference($reflection_parameter->is_passed_by_reference());
         return $param;
     }
-
     /**
      * Generate from array
      *
@@ -72,48 +51,43 @@ class ParameterGenerator extends AbstractGenerator
      * @configkey omitdefaultvalue      bool
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromArray(array $array): static
+    public static function from_array(array $array): static
     {
-        if (! isset($array['name'])) {
-            throw new Exception\InvalidArgumentException(
-                'Parameter generator requires that a name is provided for this object'
-            );
+        if (!isset($array['name'])) {
+            throw new Exception\InvalidArgumentException('Parameter generator requires that a name is provided for this object');
         }
-
         $param = new static($array['name']);
         foreach ($array as $name => $value) {
             // normalize key
             switch (strtolower(str_replace(['.', '-', '_'], '', $name))) {
                 case 'type':
-                    $param->setType($value);
+                    $param->set_type($value);
                     break;
                 case 'defaultvalue':
-                    $param->setDefaultValue($value);
+                    $param->set_default_value($value);
                     break;
                 case 'passedbyreference':
-                    $param->setPassedByReference($value);
+                    $param->set_passed_by_reference($value);
                     break;
                 case 'position':
-                    $param->setPosition($value);
+                    $param->set_position($value);
                     break;
                 case 'sourcedirty':
-                    $param->setSourceDirty($value);
+                    $param->set_source_dirty($value);
                     break;
                 case 'indentation':
-                    $param->setIndentation($value);
+                    $param->set_indentation($value);
                     break;
                 case 'sourcecontent':
-                    $param->setSourceContent($value);
+                    $param->set_source_content($value);
                     break;
                 case 'omitdefaultvalue':
-                    $param->omitDefaultValue($value);
+                    $param->omit_default_value($value);
                     break;
             }
         }
-
         return $param;
     }
-
     /**
      * @param  ?string $name
      * @param  ?string $type
@@ -121,58 +95,45 @@ class ParameterGenerator extends AbstractGenerator
      * @param  ?int    $position
      * @param  bool    $passByReference
      */
-    public function __construct(
-        $name = null,
-        $type = null,
-        $defaultValue = null,
-        $position = null,
-        $passByReference = false
-    ) {
+    public function __construct($name = null, $type = null, $default_value = null, $position = null, $pass_by_reference = false)
+    {
         if (null !== $name) {
-            $this->setName($name);
+            $this->set_name($name);
         }
         if (null !== $type) {
-            $this->setType($type);
+            $this->set_type($type);
         }
-        if (null !== $defaultValue) {
-            $this->setDefaultValue($defaultValue);
+        if (null !== $default_value) {
+            $this->set_default_value($default_value);
         }
         if (null !== $position) {
-            $this->setPosition($position);
+            $this->set_position($position);
         }
-        if (false !== $passByReference) {
-            $this->setPassedByReference(true);
+        if (false !== $pass_by_reference) {
+            $this->set_passed_by_reference(true);
         }
     }
-
-    public function setType(string $type): static
+    public function set_type(string $type): static
     {
-        $this->type = TypeGenerator::fromTypeString($type);
-
+        $this->type = Type_Generator::from_type_string($type);
         return $this;
     }
-
-    public function getType(): ?string
+    public function get_type(): ?string
     {
-        return $this->type
-            ? $this->type->__toString()
-            : null;
+        return $this->type ? $this->type->__toString() : null;
     }
-
     /**
      * @param  string $name
      */
-    public function setName($name): static
+    public function set_name($name): static
     {
         $this->name = (string) $name;
         return $this;
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return $this->name;
     }
-
     /**
      * Set the default value of the parameter.
      *
@@ -180,111 +141,87 @@ class ParameterGenerator extends AbstractGenerator
      *
      * @param  mixed $defaultValue
      */
-    public function setDefaultValue($defaultValue): static
+    public function set_default_value($default_value): static
     {
         if ($this->variadic) {
             throw new Exception\InvalidArgumentException('Variadic parameter cannot have a default value');
         }
-
-        $this->defaultValue = $defaultValue instanceof ValueGenerator
-            ? $defaultValue
-            : new ValueGenerator($defaultValue);
-
+        $this->default_value = $default_value instanceof Value_Generator ? $default_value : new Value_Generator($default_value);
         return $this;
     }
-
-    public function getDefaultValue(): ?\Laminas\Code\Generator\ValueGenerator
+    public function get_default_value(): ?\Laminas\Code\Generator\Value_Generator
     {
-        return $this->defaultValue;
+        return $this->default_value;
     }
-
     /**
      * @param  int $position
      */
-    public function setPosition($position): static
+    public function set_position($position): static
     {
         $this->position = (int) $position;
         return $this;
     }
-
-    public function getPosition(): int
+    public function get_position(): int
     {
         return $this->position;
     }
-
-    public function getPassedByReference(): bool
+    public function get_passed_by_reference(): bool
     {
-        return $this->passedByReference;
+        return $this->passed_by_reference;
     }
-
     /**
      * @param  bool $passedByReference
      */
-    public function setPassedByReference($passedByReference): static
+    public function set_passed_by_reference($passed_by_reference): static
     {
-        $this->passedByReference = (bool) $passedByReference;
+        $this->passed_by_reference = (bool) $passed_by_reference;
         return $this;
     }
-
     /**
      * @param bool $variadic
      */
-    public function setVariadic($variadic): static
+    public function set_variadic($variadic): static
     {
         $this->variadic = (bool) $variadic;
-
-        if (true === $this->variadic && isset($this->defaultValue)) {
+        if (true === $this->variadic && isset($this->default_value)) {
             throw new Exception\InvalidArgumentException('Variadic parameter cannot have a default value');
         }
-
         return $this;
     }
-
-    public function getVariadic(): bool
+    public function get_variadic(): bool
     {
         return $this->variadic;
     }
-
     public function generate(): string
     {
-        $output = $this->generateTypeHint();
-
-        if (true === $this->passedByReference) {
+        $output = $this->generate_type_hint();
+        if (true === $this->passed_by_reference) {
             $output .= '&';
         }
-
         if ($this->variadic) {
             $output .= '... ';
         }
-
         $output .= '$' . $this->name;
-
-        if ($this->omitDefaultValue) {
+        if ($this->omit_default_value) {
             return $output;
         }
-
-        if ($this->defaultValue instanceof ValueGenerator) {
+        if ($this->default_value instanceof Value_Generator) {
             $output .= ' = ';
-            $this->defaultValue->setOutputMode(ValueGenerator::OUTPUT_SINGLE_LINE);
-            $output .= $this->defaultValue;
+            $this->default_value->set_output_mode(Value_Generator::OUTPUT_SINGLE_LINE);
+            $output .= $this->default_value;
         }
-
         return $output;
     }
-
-    private function generateTypeHint(): string
+    private function generate_type_hint(): string
     {
         if (null === $this->type) {
             return '';
         }
-
         return $this->type->generate() . ' ';
     }
-
-    public function omitDefaultValue(bool $omit = true): static
+    public function omit_default_value(bool $omit = true): static
     {
-        $this->omitDefaultValue = $omit;
-
+        $this->omit_default_value = $omit;
         return $this;
     }
 }

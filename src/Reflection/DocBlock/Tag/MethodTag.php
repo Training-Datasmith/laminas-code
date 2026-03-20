@@ -1,60 +1,45 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Laminas\Code\Reflection\DocBlock\Tag;
+declare (strict_types=1);
+namespace Laminas\Code\Reflection\Doc_Block\Tag;
 
 use function explode;
-
 use function preg_match;
 use function rtrim;
-
 use Stringable;
-
-class MethodTag implements TagInterface, PhpDocTypedTagInterface, Stringable
+class Method_Tag implements Tag_Interface, Php_Doc_Typed_Tag_Interface, Stringable
 {
     /** @var list<string> */
     protected $types = [];
-
     /** @var string|null */
-    protected $methodName;
-
+    protected $method_name;
     /** @var string|null */
     protected $description;
-
     /** @var bool */
-    protected $isStatic = false;
-
+    protected $is_static = false;
     /** @return 'method' */
-    public function getName(): string
+    public function get_name(): string
     {
         return 'method';
     }
-
     /** @inheritDoc */
     public function initialize($content): void
     {
         $match = [];
-
-        if (! preg_match('#^(static[\s]+)?(.+[\s]+)?(.+\(\))[\s]*(.*)$#m', $content, $match)) {
+        if (!preg_match('#^(static[\s]+)?(.+[\s]+)?(.+\(\))[\s]*(.*)$#m', $content, $match)) {
             return;
         }
-
         if ($match[1] !== '') {
-            $this->isStatic = true;
+            $this->is_static = true;
         }
-
         if ($match[2] !== '') {
             $this->types = explode('|', rtrim($match[2]));
         }
-
-        $this->methodName = $match[3];
-
+        $this->method_name = $match[3];
         if ($match[4] !== '') {
             $this->description = $match[4];
         }
     }
-
     /**
      * Get return value type
      *
@@ -62,42 +47,36 @@ class MethodTag implements TagInterface, PhpDocTypedTagInterface, Stringable
      *
      * @return null|string
      */
-    public function getReturnType()
+    public function get_return_type()
     {
         if (empty($this->types)) {
             return null;
         }
-
         return $this->types[0];
     }
-
     /** @inheritDoc */
-    public function getTypes()
+    public function get_types()
     {
         return $this->types;
     }
-
     /** @return string|null */
-    public function getMethodName()
+    public function get_method_name()
     {
-        return $this->methodName;
+        return $this->method_name;
     }
-
     /** @return string|null */
-    public function getDescription()
+    public function get_description()
     {
         return $this->description;
     }
-
     /** @return bool */
-    public function isStatic()
+    public function is_static()
     {
-        return $this->isStatic;
+        return $this->is_static;
     }
-
     /** @return non-empty-string */
     public function __toString(): string
     {
-        return 'DocBlock Tag [ * @' . $this->getName() . ' ]' . "\n";
+        return 'DocBlock Tag [ * @' . $this->get_name() . ' ]' . "\n";
     }
 }

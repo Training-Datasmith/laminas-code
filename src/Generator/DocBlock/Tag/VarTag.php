@@ -1,57 +1,46 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Laminas\Code\Generator\DocBlock\Tag;
+declare (strict_types=1);
+namespace Laminas\Code\Generator\Doc_Block\Tag;
 
 use function ltrim;
-
-class VarTag extends AbstractTypeableTag implements TagInterface
+class Var_Tag extends Abstract_Typeable_Tag implements Tag_Interface
 {
-    private ?string $variableName = null;
-
+    private ?string $variable_name = null;
     /**
      * @param string|string[] $types
      */
-    public function __construct(?string $variableName = null, $types = [], ?string $description = null)
+    public function __construct(?string $variable_name = null, $types = [], ?string $description = null)
     {
-        if (null !== $variableName) {
-            $this->variableName = ltrim($variableName, '$');
+        if (null !== $variable_name) {
+            $this->variable_name = ltrim($variable_name, '$');
         }
-
         parent::__construct($types, $description);
     }
-
     /** @inheritDoc */
-    public function getName(): string
+    public function get_name(): string
     {
         return 'var';
     }
-
     /**
      * @internal this code is only public for compatibility with the
      *
      * @see \Laminas\Code\Generator\DocBlock\TagManager, which
      *           uses setters
      */
-    public function setVariableName(?string $variableName): void
+    public function set_variable_name(?string $variable_name): void
     {
-        if (null !== $variableName) {
-            $this->variableName = ltrim($variableName, '$');
+        if (null !== $variable_name) {
+            $this->variable_name = ltrim($variable_name, '$');
         }
     }
-
-    public function getVariableName(): ?string
+    public function get_variable_name(): ?string
     {
-        return $this->variableName;
+        return $this->variable_name;
     }
-
     /** @inheritDoc */
     public function generate(): string
     {
-        return '@var'
-            . (! empty($this->types) ? ' ' . $this->getTypesAsString() : '')
-            . (null !== $this->variableName ? ' $' . $this->variableName : '')
-            . (! empty($this->description) ? ' ' . $this->description : '');
+        return '@var' . (!empty($this->types) ? ' ' . $this->get_types_as_string() : '') . (null !== $this->variable_name ? ' $' . $this->variable_name : '') . (!empty($this->description) ? ' ' . $this->description : '');
     }
 }

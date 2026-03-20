@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Laminas\Code\Reflection\Doc_Block\Tag;
 
-namespace Laminas\Code\Reflection\DocBlock\Tag;
-
-interface PhpDocTypedTagInterface
+interface Php_Doc_Typed_Tag_Interface
 {
     /**
      * Return all types supported by the tag definition
      *
      * @return list<string>
      */
-    public function getTypes();
+    public function get_types();
 }

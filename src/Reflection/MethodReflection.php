@@ -1,96 +1,80 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Reflection;
 
 use function array_key_exists;
 use function array_map;
 use function array_shift;
-
 use function array_slice;
 use function class_exists;
 use function count;
 use function file;
 use function file_exists;
-
 use const FILE_IGNORE_NEW_LINES;
-
 use function implode;
 use function is_array;
-
 use ReflectionMethod as PhpReflectionMethod;
 use ReflectionParameter as PhpReflectionParameter;
-use ReturnTypeWillChange;
-
+use Return_Type_Will_Change;
 use function rtrim;
 use function strlen;
 use function substr;
 use function token_get_all;
 use function token_name;
-
 use function var_export;
-
-class MethodReflection extends PhpReflectionMethod implements ReflectionInterface
+class Method_Reflection extends Php_Reflection_Method implements Reflection_Interface
 {
     /**
      * Constant use in @MethodReflection to display prototype as an array
      */
     public const PROTOTYPE_AS_ARRAY = 'prototype_as_array';
-
     /**
      * Constant use in @MethodReflection to display prototype as a string
      */
     public const PROTOTYPE_AS_STRING = 'prototype_as_string';
-
     /**
      * Retrieve method DocBlock reflection
      *
      * @return DocBlockReflection|false
      */
-    public function getDocBlock(): false|\Laminas\Code\Reflection\DocBlockReflection
+    public function get_doc_block(): false|\Laminas\Code\Reflection\Doc_Block_Reflection
     {
-        if ('' == $this->getDocComment()) {
+        if ('' == $this->get_doc_comment()) {
             return false;
         }
-
-        return new DocBlockReflection($this);
+        return new Doc_Block_Reflection($this);
     }
-
     /**
      * Get start line (position) of method
      *
      * @param  bool $includeDocComment
      * @return int
      */
-    #[ReturnTypeWillChange]
-    public function getStartLine($includeDocComment = false)
+    #[Return_Type_Will_Change]
+    public function get_start_line($include_doc_comment = false)
     {
-        if (!$includeDocComment) {
-            return parent::getStartLine();
+        if (!$include_doc_comment) {
+            return parent::get_start_line();
         }
-        if ($this->getDocComment() != '') {
-            return $this->getDocBlock()->getStartLine();
+        if ($this->get_doc_comment() != '') {
+            return $this->get_doc_block()->get_start_line();
         }
-
-        return parent::getStartLine();
+        return parent::get_start_line();
     }
-
     /**
      * Get reflection of declaring class
      *
      * @return ClassReflection
      */
-    #[ReturnTypeWillChange]
-    public function getDeclaringClass()
+    #[Return_Type_Will_Change]
+    public function get_declaring_class()
     {
-        $phpReflection     = parent::getDeclaringClass();
-        $laminasReflection = new ClassReflection($phpReflection->getName());
-        unset($phpReflection);
-
-        return $laminasReflection;
+        $php_reflection = parent::get_declaring_class();
+        $laminas_reflection = new Class_Reflection($php_reflection->get_name());
+        unset($php_reflection);
+        return $laminas_reflection;
     }
-
     /**
      * Get method prototype
      *
@@ -101,158 +85,104 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
      * @param string $format
      * @return array|string
      */
-    #[ReturnTypeWillChange]
-    public function getPrototype($format = self::PROTOTYPE_AS_ARRAY)
+    #[Return_Type_Will_Change]
+    public function get_prototype($format = self::PROTOTYPE_AS_ARRAY)
     {
-        $returnType = 'mixed';
-        $docBlock   = $this->getDocBlock();
-        if ($docBlock) {
-            $return      = $docBlock->getTag('return');
-            $returnTypes = $return->getTypes();
-            $returnType  = count($returnTypes) > 1 ? implode('|', $returnTypes) : $returnTypes[0];
+        $return_type = 'mixed';
+        $doc_block = $this->get_doc_block();
+        if ($doc_block) {
+            $return = $doc_block->get_tag('return');
+            $return_types = $return->get_types();
+            $return_type = count($return_types) > 1 ? implode('|', $return_types) : $return_types[0];
         }
-
-        $declaringClass = $this->getDeclaringClass();
-        $prototype      = [
-            'namespace'  => $declaringClass->getNamespaceName(),
-            'class'      => substr($declaringClass->getName(), strlen($declaringClass->getNamespaceName()) + 1),
-            'name'       => $this->getName(),
-            'visibility' => $this->isPublic() ? 'public' : ($this->isPrivate() ? 'private' : 'protected'),
-            'return'     => $returnType,
-            'arguments'  => [],
-        ];
-
-        $parameters = $this->getParameters();
+        $declaring_class = $this->get_declaring_class();
+        $prototype = ['namespace' => $declaring_class->get_namespace_name(), 'class' => substr($declaring_class->get_name(), strlen($declaring_class->get_namespace_name()) + 1), 'name' => $this->get_name(), 'visibility' => $this->is_public() ? 'public' : ($this->is_private() ? 'private' : 'protected'), 'return' => $return_type, 'arguments' => []];
+        $parameters = $this->get_parameters();
         foreach ($parameters as $parameter) {
-            $prototype['arguments'][$parameter->getName()] = [
-                'type'     => $parameter->detectType(),
-                'required' => ! $parameter->isOptional(),
-                'by_ref'   => $parameter->isPassedByReference(),
-                'default'  => $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
-            ];
-
-            if ($parameter->isPromoted()) {
-                $prototype['arguments'][$parameter->getName()]['promoted'] = true;
-                if ($parameter->isPublicPromoted()) {
-                    $prototype['arguments'][$parameter->getName()]['visibility'] = 'public';
-                } elseif ($parameter->isProtectedPromoted()) {
-                    $prototype['arguments'][$parameter->getName()]['visibility'] = 'protected';
-                } elseif ($parameter->isPrivatePromoted()) {
-                    $prototype['arguments'][$parameter->getName()]['visibility'] = 'private';
+            $prototype['arguments'][$parameter->get_name()] = ['type' => $parameter->detect_type(), 'required' => !$parameter->is_optional(), 'by_ref' => $parameter->is_passed_by_reference(), 'default' => $parameter->is_default_value_available() ? $parameter->get_default_value() : null];
+            if ($parameter->is_promoted()) {
+                $prototype['arguments'][$parameter->get_name()]['promoted'] = true;
+                if ($parameter->is_public_promoted()) {
+                    $prototype['arguments'][$parameter->get_name()]['visibility'] = 'public';
+                } elseif ($parameter->is_protected_promoted()) {
+                    $prototype['arguments'][$parameter->get_name()]['visibility'] = 'protected';
+                } elseif ($parameter->is_private_promoted()) {
+                    $prototype['arguments'][$parameter->get_name()]['visibility'] = 'private';
                 }
             }
         }
-
         if ($format == self::PROTOTYPE_AS_STRING) {
             $line = $prototype['visibility'] . ' ' . $prototype['return'] . ' ' . $prototype['name'] . '(';
             $args = [];
             foreach ($prototype['arguments'] as $name => $argument) {
-                $argsLine =
-                    (
-                        array_key_exists('visibility', $argument)
-                            ? $argument['visibility'] . ' '
-                            : ''
-                    ) . (
-                        $argument['type']
-                            ? $argument['type'] . ' '
-                            : ''
-                    ) . (
-                        $argument['by_ref']
-                            ? '&'
-                            : ''
-                    ) . '$' . $name;
-                if (! $argument['required']) {
-                    $argsLine .= ' = ' . var_export($argument['default'], true);
+                $args_line = (array_key_exists('visibility', $argument) ? $argument['visibility'] . ' ' : '') . ($argument['type'] ? $argument['type'] . ' ' : '') . ($argument['by_ref'] ? '&' : '') . '$' . $name;
+                if (!$argument['required']) {
+                    $args_line .= ' = ' . var_export($argument['default'], true);
                 }
-                $args[] = $argsLine;
+                $args[] = $args_line;
             }
             $line .= implode(', ', $args);
-
             return $line . ')';
         }
-
         return $prototype;
     }
-
     /**
      * Get all method parameter reflection objects
      *
      * @return list<ParameterReflection>
      */
-    #[ReturnTypeWillChange]
-    public function getParameters()
+    #[Return_Type_Will_Change]
+    public function get_parameters()
     {
-        $method = [$this->getDeclaringClass()->getName(), $this->getName()];
-
-        return array_map(
-            static fn (PhpReflectionParameter $parameter): ParameterReflection
-                => new ParameterReflection($method, $parameter->getName()),
-            parent::getParameters()
-        );
+        $method = [$this->get_declaring_class()->get_name(), $this->get_name()];
+        return array_map(static fn(Php_Reflection_Parameter $parameter): Parameter_Reflection => new Parameter_Reflection($method, $parameter->get_name()), parent::get_parameters());
     }
-
     /**
      * Get method contents
      *
      * @param  bool $includeDocBlock
      */
-    public function getContents($includeDocBlock = true): string
+    public function get_contents($include_doc_block = true): string
     {
-        $docComment = $this->getDocComment();
-        $content    = $includeDocBlock && ! empty($docComment) ? $docComment . "\n" : '';
-
-        return $content . $this->extractMethodContents();
+        $doc_comment = $this->get_doc_comment();
+        $content = $include_doc_block && !empty($doc_comment) ? $doc_comment . "\n" : '';
+        return $content . $this->extract_method_contents();
     }
-
     /**
      * Get method body
      *
      * @return string
      */
-    public function getBody()
+    public function get_body()
     {
-        return $this->extractMethodContents(true);
+        return $this->extract_method_contents(true);
     }
-
     /**
      * Tokenize method string and return concatenated body
      *
      * @param bool $bodyOnly
      */
-    protected function extractMethodContents($bodyOnly = false): string
+    protected function extract_method_contents($body_only = false): string
     {
-        $fileName = $this->getFileName();
-
-        if ((class_exists($this->class) && false === $fileName) || ! file_exists($fileName)) {
+        $file_name = $this->get_file_name();
+        if (class_exists($this->class) && false === $file_name || !file_exists($file_name)) {
             return '';
         }
-
-        $lines = array_slice(
-            file($fileName, FILE_IGNORE_NEW_LINES),
-            $this->getStartLine() - 1,
-            $this->getEndLine() - ($this->getStartLine() - 1),
-            true
-        );
-
-        $functionLine = implode("\n", $lines);
-        $tokens       = token_get_all('<?php ' . $functionLine);
-
+        $lines = array_slice(file($file_name, FILE_IGNORE_NEW_LINES), $this->get_start_line() - 1, $this->get_end_line() - ($this->get_start_line() - 1), true);
+        $function_line = implode("\n", $lines);
+        $tokens = token_get_all('<?php ' . $function_line);
         //remove first entry which is php open tag
         array_shift($tokens);
-
-        if (! count($tokens)) {
+        if (!count($tokens)) {
             return '';
         }
-
-        $capture    = false;
-        $firstBrace = false;
-        $body       = '';
-
+        $capture = false;
+        $first_brace = false;
+        $body = '';
         foreach ($tokens as $key => $token) {
-            $tokenType  = is_array($token) ? token_name($token[0]) : $token;
-            $tokenValue = is_array($token) ? $token[1] : $token;
-
-            switch ($tokenType) {
+            $token_type = is_array($token) ? token_name($token[0]) : $token;
+            $token_value = is_array($token) ? $token[1] : $token;
+            switch ($token_type) {
                 case 'T_FINAL':
                 case 'T_ABSTRACT':
                 case 'T_PUBLIC':
@@ -262,127 +192,107 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
                 case 'T_FUNCTION':
                     // check to see if we have a valid function
                     // then check if we are inside function and have a closure
-                    if ($this->isValidFunction($tokens, $key, $this->getName())) {
-                        if ($bodyOnly === false) {
+                    if ($this->is_valid_function($tokens, $key, $this->get_name())) {
+                        if ($body_only === false) {
                             //if first instance of tokenType grab prefixed whitespace
                             //and append to body
                             if ($capture === false) {
-                                $body .= $this->extractPrefixedWhitespace($tokens, $key);
+                                $body .= $this->extract_prefixed_whitespace($tokens, $key);
                             }
-                            $body .= $tokenValue;
+                            $body .= $token_value;
                         }
-
                         $capture = true;
                     } else {
                         //closure test
-                        if ($firstBrace && $tokenType == 'T_FUNCTION') {
-                            $body .= $tokenValue;
+                        if ($first_brace && $token_type == 'T_FUNCTION') {
+                            $body .= $token_value;
                             break;
                         }
                         $capture = false;
                         break;
                     }
                     break;
-
                 case '{':
                     if ($capture === false) {
                         break;
                     }
-
-                    if ($firstBrace === false) {
-                        $firstBrace = true;
-                        if ($bodyOnly === true) {
+                    if ($first_brace === false) {
+                        $first_brace = true;
+                        if ($body_only === true) {
                             break;
                         }
                     }
-
-                    $body .= $tokenValue;
+                    $body .= $token_value;
                     break;
-
                 case '}':
                     if ($capture === false) {
                         break;
                     }
-
                     //check to see if this is the last brace
-                    if ($this->isEndingBrace($tokens, $key)) {
+                    if ($this->is_ending_brace($tokens, $key)) {
                         //capture the end brace if not bodyOnly
-                        if ($bodyOnly === false) {
-                            $body .= $tokenValue;
+                        if ($body_only === false) {
+                            $body .= $token_value;
                         }
-
                         break 2;
                     }
-
-                    $body .= $tokenValue;
+                    $body .= $token_value;
                     break;
-
                 default:
                     if ($capture === false) {
                         break;
                     }
-
                     // if returning body only wait for first brace before capturing
-                    if ($bodyOnly === true && $firstBrace !== true) {
+                    if ($body_only === true && $first_brace !== true) {
                         break;
                     }
-
-                    $body .= $tokenValue;
+                    $body .= $token_value;
                     break;
             }
         }
-
         //remove ending whitespace and return
         return rtrim($body);
     }
-
     /**
      * Take current position and find any whitespace
      *
      * @param int $position
      */
-    protected function extractPrefixedWhitespace(array $haystack, $position): string
+    protected function extract_prefixed_whitespace(array $haystack, $position): string
     {
         $content = '';
-        $count   = count($haystack);
+        $count = count($haystack);
         if ($position + 1 == $count) {
             return $content;
         }
-
         for ($i = $position - 1; $i >= 0; $i--) {
-            $tokenType  = is_array($haystack[$i]) ? token_name($haystack[$i][0]) : $haystack[$i];
-            $tokenValue = is_array($haystack[$i]) ? $haystack[$i][1] : $haystack[$i];
-
+            $token_type = is_array($haystack[$i]) ? token_name($haystack[$i][0]) : $haystack[$i];
+            $token_value = is_array($haystack[$i]) ? $haystack[$i][1] : $haystack[$i];
             //search only for whitespace
-            if ($tokenType == 'T_WHITESPACE') {
-                $content .= $tokenValue;
+            if ($token_type == 'T_WHITESPACE') {
+                $content .= $token_value;
             } else {
                 break;
             }
         }
-
         return $content;
     }
-
     /**
      * Test for ending brace
      *
      * @param int $position
      */
-    protected function isEndingBrace(array $haystack, $position): ?bool
+    protected function is_ending_brace(array $haystack, $position): ?bool
     {
         $count = count($haystack);
-
         //advance one position
         $position += 1;
-
         if ($position == $count) {
             return true;
         }
-
         for ($i = $position; $i < $count; $i++) {
-            $tokenType = is_array($haystack[$i]) ? token_name($haystack[$i][0]) : $haystack[$i];
-            switch ($tokenType) {
+            $token_type = is_array($haystack[$i]) ? token_name($haystack[$i][0]) : $haystack[$i];
+            switch ($token_type) {
                 case 'T_FINAL':
                 case 'T_ABSTRACT':
                 case 'T_PUBLIC':
@@ -390,15 +300,13 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
                 case 'T_PRIVATE':
                 case 'T_STATIC':
                     return true;
-
                 case 'T_FUNCTION':
                     // If a function is encountered and that function is not a closure
                     // then return true.  otherwise the function is a closure, return false
-                    if ($this->isValidFunction($haystack, $i)) {
+                    if ($this->is_valid_function($haystack, $i)) {
                         return true;
                     }
                     return false;
-
                 case '}':
                 case ';':
                 case 'T_BREAK':
@@ -427,10 +335,8 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
                     return false;
             }
         }
-
         return null;
     }
-
     /**
      * Test to see if current position is valid function or
      * closure.  Returns true if it's a function and NOT a closure
@@ -439,37 +345,32 @@ class MethodReflection extends PhpReflectionMethod implements ReflectionInterfac
      * @param string $functionName
      * @return bool
      */
-    protected function isValidFunction(array $haystack, $position, $functionName = null)
+    protected function is_valid_function(array $haystack, $position, $function_name = null)
     {
-        $isValid = false;
-        $count   = count($haystack);
+        $is_valid = false;
+        $count = count($haystack);
         for ($i = $position + 1; $i < $count; $i++) {
-            $tokenType  = is_array($haystack[$i]) ? token_name($haystack[$i][0]) : $haystack[$i];
-            $tokenValue = is_array($haystack[$i]) ? $haystack[$i][1] : $haystack[$i];
-
+            $token_type = is_array($haystack[$i]) ? token_name($haystack[$i][0]) : $haystack[$i];
+            $token_value = is_array($haystack[$i]) ? $haystack[$i][1] : $haystack[$i];
             //check for occurrence of ( or
-            if ($tokenType == 'T_STRING') {
+            if ($token_type == 'T_STRING') {
                 //check to see if function name is passed, if so validate against that
-                if ($functionName !== null && $tokenValue != $functionName) {
-                    $isValid = false;
+                if ($function_name !== null && $token_value != $function_name) {
+                    $is_valid = false;
                     break;
                 }
-
-                $isValid = true;
+                $is_valid = true;
                 break;
-            } elseif ($tokenValue == '(') {
+            } elseif ($token_value == '(') {
                 break;
             }
         }
-
-        return $isValid;
+        return $is_valid;
     }
-
-    public function toString(): string
+    public function to_string(): string
     {
         return parent::__toString();
     }
-
     public function __toString(): string
     {
         return parent::__toString();

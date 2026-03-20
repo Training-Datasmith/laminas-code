@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generator\Exception;
 
-use Laminas\Code\Exception\ExceptionInterface as Exception;
-
-interface ExceptionInterface extends Exception
+use Laminas\Code\Exception\Exception_Interface as Exception;
+interface Exception_Interface extends Exception
 {
 }

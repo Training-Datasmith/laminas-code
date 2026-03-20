@@ -1,20 +1,16 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Laminas\Code\Generator\Doc_Block\Tag;
 
-namespace Laminas\Code\Generator\DocBlock\Tag;
-
-class ThrowsTag extends AbstractTypeableTag implements TagInterface
+class Throws_Tag extends Abstract_Typeable_Tag implements Tag_Interface
 {
-    public function getName(): string
+    public function get_name(): string
     {
         return 'throws';
     }
-
     public function generate(): string
     {
-        return '@throws'
-        . (! empty($this->types) ? ' ' . $this->getTypesAsString() : '')
-        . (! empty($this->description) ? ' ' . $this->description : '');
+        return '@throws' . (!empty($this->types) ? ' ' . $this->get_types_as_string() : '') . (!empty($this->description) ? ' ' . $this->description : '');
     }
 }

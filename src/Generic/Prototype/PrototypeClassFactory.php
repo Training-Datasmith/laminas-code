@@ -1,13 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generic\Prototype;
 
 use Laminas\Code\Reflection\Exception;
-
 use function str_replace;
-
 /**
  * This is a factory for classes which are identified by name.
  *
@@ -21,91 +18,76 @@ use function str_replace;
  *
  * @internal this class is not part of the public API of this package
  */
-class PrototypeClassFactory
+class Prototype_Class_Factory
 {
     /** @var array<string, PrototypeInterface> */
     protected $prototypes = [];
-
     /** @var PrototypeGenericInterface|null */
-    protected $genericPrototype;
-
+    protected $generic_prototype;
     /**
      * @param PrototypeInterface[] $prototypes
      */
-    public function __construct(array $prototypes = [], ?PrototypeGenericInterface $genericPrototype = null)
+    public function __construct(array $prototypes = [], ?Prototype_Generic_Interface $generic_prototype = null)
     {
         foreach ($prototypes as $prototype) {
-            $this->addPrototype($prototype);
+            $this->add_prototype($prototype);
         }
-
-        if ($genericPrototype) {
-            $this->setGenericPrototype($genericPrototype);
+        if ($generic_prototype) {
+            $this->set_generic_prototype($generic_prototype);
         }
     }
-
     /**
      * @throws Exception\InvalidArgumentException
      */
-    public function addPrototype(PrototypeInterface $prototype): void
+    public function add_prototype(Prototype_Interface $prototype): void
     {
-        $prototypeName = $this->normalizeName($prototype->getName());
-
-        if (isset($this->prototypes[$prototypeName])) {
+        $prototype_name = $this->normalize_name($prototype->get_name());
+        if (isset($this->prototypes[$prototype_name])) {
             throw new Exception\InvalidArgumentException('A prototype with this name already exists in this manager');
         }
-
-        $this->prototypes[$prototypeName] = $prototype;
+        $this->prototypes[$prototype_name] = $prototype;
     }
-
     /**
      * @throws Exception\InvalidArgumentException
      */
-    public function setGenericPrototype(PrototypeGenericInterface $prototype): void
+    public function set_generic_prototype(Prototype_Generic_Interface $prototype): void
     {
-        if (isset($this->genericPrototype)) {
+        if (isset($this->generic_prototype)) {
             throw new Exception\InvalidArgumentException('A default prototype is already set');
         }
-
-        $this->genericPrototype = $prototype;
+        $this->generic_prototype = $prototype;
     }
-
     /**
      * @param string $name
      */
-    protected function normalizeName($name): string
+    protected function normalize_name($name): string
     {
         return str_replace(['-', '_'], '', $name);
     }
-
     /**
      * @param string $name
      */
-    public function hasPrototype($name): bool
+    public function has_prototype($name): bool
     {
-        $name = $this->normalizeName($name);
+        $name = $this->normalize_name($name);
         return isset($this->prototypes[$name]);
     }
-
     /**
      * @param  string $prototypeName
      * @return PrototypeInterface
      * @throws Exception\RuntimeException
      */
-    public function getClonedPrototype($prototypeName)
+    public function get_cloned_prototype($prototype_name)
     {
-        $prototypeName = $this->normalizeName($prototypeName);
-
-        if (! $this->hasPrototype($prototypeName) && ! isset($this->genericPrototype)) {
+        $prototype_name = $this->normalize_name($prototype_name);
+        if (!$this->has_prototype($prototype_name) && !isset($this->generic_prototype)) {
             throw new Exception\RuntimeException('This tag name is not supported by this tag manager');
         }
-
-        if (! $this->hasPrototype($prototypeName)) {
-            $newPrototype = clone $this->genericPrototype;
-            $newPrototype->setName($prototypeName);
-
-            return $newPrototype;
+        if (!$this->has_prototype($prototype_name)) {
+            $new_prototype = clone $this->generic_prototype;
+            $new_prototype->set_name($prototype_name);
+            return $new_prototype;
         }
-
-        return clone $this->prototypes[$prototypeName];
+        return clone $this->prototypes[$prototype_name];
     }
 }

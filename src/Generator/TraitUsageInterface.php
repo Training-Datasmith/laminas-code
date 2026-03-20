@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generator;
 
 use ReflectionMethod;
-
-interface TraitUsageInterface
+interface Trait_Usage_Interface
 {
     /**
      * Add a class to "use" classes
@@ -15,15 +13,13 @@ interface TraitUsageInterface
      * @param non-empty-string|null $useAlias
      * @return self
      */
-    public function addUse($use, $useAlias = null);
-
+    public function add_use($use, $use_alias = null);
     /**
      * Returns the "use" classes
      *
      * @return list<non-empty-string>
      */
-    public function getUses();
-
+    public function get_uses();
     /**
      * Add trait takes an array of trait options or string as arguments.
      *
@@ -43,8 +39,7 @@ interface TraitUsageInterface
      * @psalm-param string|array{traitName: string, aliases?: array, insteadof?: array} $trait
      * @return self
      */
-    public function addTrait($trait);
-
+    public function add_trait($trait);
     /**
      * Add multiple traits.  Trait can be an array of trait names or array of trait
      * configurations
@@ -53,31 +48,27 @@ interface TraitUsageInterface
      * @psalm-param list<string|array{traitName: string, aliases?: array, insteadof?: array}> $traits
      * @return self
      */
-    public function addTraits(array $traits);
-
+    public function add_traits(array $traits);
     /**
      * Check to see if the class has a trait defined
      *
      * @param string $traitName
      * @return bool
      */
-    public function hasTrait($traitName);
-
+    public function has_trait($trait_name);
     /**
      * Get a list of trait names
      *
      * @return array
      */
-    public function getTraits();
-
+    public function get_traits();
     /**
      * Remove a trait by its name
      *
      * @param string $traitName
      * @return self
      */
-    public function removeTrait($traitName);
-
+    public function remove_trait($trait_name);
     /**
      * Add a trait alias.  This will be used to generate the AS portion of the use statement.
      *
@@ -96,8 +87,7 @@ interface TraitUsageInterface
      * @param ReflectionMethod::IS_PUBLIC|ReflectionMethod::IS_PRIVATE|ReflectionMethod::IS_PROTECTED|null $visibility
      * @return $this
      */
-    public function addTraitAlias($method, $alias, $visibility = null);
-
+    public function add_trait_alias($method, $alias, $visibility = null);
     /**
      * @return array<
      *     non-empty-string,
@@ -107,8 +97,7 @@ interface TraitUsageInterface
      *     }
      * >
      */
-    public function getTraitAliases();
-
+    public function get_trait_aliases();
     /**
      * Add a trait method override.  This will be used to generate the INSTEADOF portion of the use
      * statement.
@@ -126,13 +115,11 @@ interface TraitUsageInterface
      * This method provides 2 ways for defining the trait method.
      * Option 1: String of trait to replace
      * Option 2: Array of strings of traits to replace
-
      * @param mixed $method
      * @param mixed $traitsToReplace
      * @return $this
      */
-    public function addTraitOverride($method, $traitsToReplace);
-
+    public function add_trait_override($method, $traits_to_replace);
     /**
      * Remove an override for a given trait::method
      *
@@ -154,12 +141,11 @@ interface TraitUsageInterface
      * @param mixed $overridesToRemove
      * @return self
      */
-    public function removeTraitOverride($method, $overridesToRemove = null);
-
+    public function remove_trait_override($method, $overrides_to_remove = null);
     /**
      * Return trait overrides
      *
      * @return array
      */
-    public function getTraitOverrides();
+    public function get_trait_overrides();
 }

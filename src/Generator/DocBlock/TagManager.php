@@ -1,23 +1,17 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Laminas\Code\Generator\Doc_Block;
 
-namespace Laminas\Code\Generator\DocBlock;
-
-use Laminas\Code\Generator\DocBlock\Tag\TagInterface;
-use Laminas\Code\Generic\Prototype\PrototypeClassFactory;
-use Laminas\Code\Reflection\DocBlock\Tag\TagInterface as ReflectionTagInterface;
-
+use Laminas\Code\Generator\Doc_Block\Tag\Tag_Interface;
+use Laminas\Code\Generic\Prototype\Prototype_Class_Factory;
+use Laminas\Code\Reflection\Doc_Block\Tag\Tag_Interface as ReflectionTagInterface;
 use function method_exists;
-
 use ReflectionClass;
-
 use ReflectionMethod;
-
 use function str_starts_with;
 use function substr;
 use function ucfirst;
-
 /**
  * This class is used in DocBlockGenerator and creates the needed
  * Tag classes depending on the tag. So for example an @author tag
@@ -26,46 +20,43 @@ use function ucfirst;
  * If none of the classes is applicable, the GenericTag class will be
  * created
  */
-class TagManager extends PrototypeClassFactory
+class Tag_Manager extends Prototype_Class_Factory
 {
-    public function initializeDefaultTags(): void
+    public function initialize_default_tags(): void
     {
-        $this->addPrototype(new Tag\ParamTag());
-        $this->addPrototype(new Tag\ReturnTag());
-        $this->addPrototype(new Tag\MethodTag());
-        $this->addPrototype(new Tag\PropertyTag());
-        $this->addPrototype(new Tag\AuthorTag());
-        $this->addPrototype(new Tag\LicenseTag());
-        $this->addPrototype(new Tag\ThrowsTag());
-        $this->addPrototype(new Tag\VarTag());
-        $this->setGenericPrototype(new Tag\GenericTag());
+        $this->add_prototype(new Tag\Param_Tag());
+        $this->add_prototype(new Tag\Return_Tag());
+        $this->add_prototype(new Tag\Method_Tag());
+        $this->add_prototype(new Tag\Property_Tag());
+        $this->add_prototype(new Tag\Author_Tag());
+        $this->add_prototype(new Tag\License_Tag());
+        $this->add_prototype(new Tag\Throws_Tag());
+        $this->add_prototype(new Tag\Var_Tag());
+        $this->set_generic_prototype(new Tag\Generic_Tag());
     }
-
     /**
      * @return TagInterface
      */
-    public function createTagFromReflection(ReflectionTagInterface $reflectionTag)
+    public function create_tag_from_reflection(Reflection_Tag_Interface $reflection_tag)
     {
-        $tagName = $reflectionTag->getName();
-
+        $tag_name = $reflection_tag->get_name();
         /** @var TagInterface $newTag */
-        $newTag = $this->getClonedPrototype($tagName);
-
+        $new_tag = $this->get_cloned_prototype($tag_name);
         // transport any properties via accessors and mutators from reflection to codegen object
-        $reflectionClass = new ReflectionClass($reflectionTag);
-        foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            if (str_starts_with($method->getName(), 'get')) {
-                $propertyName = substr($method->getName(), 3);
-                if (method_exists($newTag, 'set' . $propertyName)) {
-                    $newTag->{'set' . $propertyName}($reflectionTag->{'get' . $propertyName}());
+        $reflection_class = new ReflectionClass($reflection_tag);
+        foreach ($reflection_class->get_methods(ReflectionMethod::IS_PUBLIC) as $method) {
+            if (str_starts_with($method->get_name(), 'get')) {
+                $property_name = substr($method->get_name(), 3);
+                if (method_exists($new_tag, 'set' . $property_name)) {
+                    $new_tag->{'set' . $property_name}($reflection_tag->{'get' . $property_name}());
                 }
-            } elseif (str_starts_with($method->getName(), 'is')) {
-                $propertyName = ucfirst($method->getName());
-                if (method_exists($newTag, 'set' . $propertyName)) {
-                    $newTag->{'set' . $propertyName}($reflectionTag->{$method->getName()}());
+            } elseif (str_starts_with($method->get_name(), 'is')) {
+                $property_name = ucfirst($method->get_name());
+                if (method_exists($new_tag, 'set' . $property_name)) {
+                    $new_tag->{'set' . $property_name}($reflection_tag->{$method->get_name()}());
                 }
             }
         }
-        return $newTag;
+        return $new_tag;
     }
 }

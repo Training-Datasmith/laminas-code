@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Laminas\Code\Generator\Doc_Block\Tag;
 
-namespace Laminas\Code\Generator\DocBlock\Tag;
-
-use Laminas\Code\Generic\Prototype\PrototypeInterface;
-
-interface TagInterface extends PrototypeInterface
+use Laminas\Code\Generic\Prototype\Prototype_Interface;
+interface Tag_Interface extends Prototype_Interface
 {
 }

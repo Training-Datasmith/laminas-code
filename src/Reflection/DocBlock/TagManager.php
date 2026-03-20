@@ -1,41 +1,36 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Laminas\Code\Reflection\Doc_Block;
 
-namespace Laminas\Code\Reflection\DocBlock;
-
-use Laminas\Code\Generic\Prototype\PrototypeClassFactory;
-use Laminas\Code\Reflection\DocBlock\Tag\TagInterface;
-
-class TagManager extends PrototypeClassFactory
+use Laminas\Code\Generic\Prototype\Prototype_Class_Factory;
+use Laminas\Code\Reflection\Doc_Block\Tag\Tag_Interface;
+class Tag_Manager extends Prototype_Class_Factory
 {
-    public function initializeDefaultTags(): void
+    public function initialize_default_tags(): void
     {
-        $this->addPrototype(new Tag\ParamTag());
-        $this->addPrototype(new Tag\ReturnTag());
-        $this->addPrototype(new Tag\MethodTag());
-        $this->addPrototype(new Tag\PropertyTag());
-        $this->addPrototype(new Tag\AuthorTag());
-        $this->addPrototype(new Tag\LicenseTag());
-        $this->addPrototype(new Tag\ThrowsTag());
-        $this->addPrototype(new Tag\VarTag());
-        $this->setGenericPrototype(new Tag\GenericTag());
+        $this->add_prototype(new Tag\Param_Tag());
+        $this->add_prototype(new Tag\Return_Tag());
+        $this->add_prototype(new Tag\Method_Tag());
+        $this->add_prototype(new Tag\Property_Tag());
+        $this->add_prototype(new Tag\Author_Tag());
+        $this->add_prototype(new Tag\License_Tag());
+        $this->add_prototype(new Tag\Throws_Tag());
+        $this->add_prototype(new Tag\Var_Tag());
+        $this->set_generic_prototype(new Tag\Generic_Tag());
     }
-
     /**
      * @param string $tagName
      * @param string $content
      * @return TagInterface
      */
-    public function createTag($tagName, $content = null)
+    public function create_tag($tag_name, $content = null)
     {
         /** @var TagInterface $newTag */
-        $newTag = $this->getClonedPrototype($tagName);
-
+        $new_tag = $this->get_cloned_prototype($tag_name);
         if ($content) {
-            $newTag->initialize($content);
+            $new_tag->initialize($content);
         }
-
-        return $newTag;
+        return $new_tag;
     }
 }

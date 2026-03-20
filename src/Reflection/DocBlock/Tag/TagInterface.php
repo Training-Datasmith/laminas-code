@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Laminas\Code\Reflection\Doc_Block\Tag;
 
-namespace Laminas\Code\Reflection\DocBlock\Tag;
-
-use Laminas\Code\Generic\Prototype\PrototypeInterface;
-
-interface TagInterface extends PrototypeInterface
+use Laminas\Code\Generic\Prototype\Prototype_Interface;
+interface Tag_Interface extends Prototype_Interface
 {
     /**
      * @param  string $content

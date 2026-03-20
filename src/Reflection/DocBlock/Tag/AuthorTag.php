@@ -1,62 +1,49 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Laminas\Code\Reflection\DocBlock\Tag;
+declare (strict_types=1);
+namespace Laminas\Code\Reflection\Doc_Block\Tag;
 
 use function preg_match;
-
 use function rtrim;
-
 use Stringable;
-
-class AuthorTag implements TagInterface, Stringable
+class Author_Tag implements Tag_Interface, Stringable
 {
     /** @var string|null */
-    protected $authorName;
-
+    protected $author_name;
     /** @var string|null */
-    protected $authorEmail;
-
+    protected $author_email;
     /** @return 'author' */
-    public function getName(): string
+    public function get_name(): string
     {
         return 'author';
     }
-
     /** @inheritDoc */
     public function initialize($content): void
     {
         $match = [];
-
-        if (! preg_match('/^([^\<]*)(\<([^\>]*)\>)?(.*)$/u', $content, $match)) {
+        if (!preg_match('/^([^\<]*)(\<([^\>]*)\>)?(.*)$/u', $content, $match)) {
             return;
         }
-
         if ($match[1] !== '') {
-            $this->authorName = rtrim($match[1]);
+            $this->author_name = rtrim($match[1]);
         }
-
         if (isset($match[3]) && $match[3] !== '') {
-            $this->authorEmail = $match[3];
+            $this->author_email = $match[3];
         }
     }
-
     /** @return null|string */
-    public function getAuthorName()
+    public function get_author_name()
     {
-        return $this->authorName;
+        return $this->author_name;
     }
-
     /** @return null|string */
-    public function getAuthorEmail()
+    public function get_author_email()
     {
-        return $this->authorEmail;
+        return $this->author_email;
     }
-
     /** @return non-empty-string */
     public function __toString(): string
     {
-        return 'DocBlock Tag [ * @' . $this->getName() . ' ]' . "\n";
+        return 'DocBlock Tag [ * @' . $this->get_name() . ' ]' . "\n";
     }
 }

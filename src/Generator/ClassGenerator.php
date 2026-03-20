@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generator;
 
 use function array_diff;
-
 use function array_filter;
 use function array_map;
 use function array_pop;
@@ -18,9 +16,7 @@ use function in_array;
 use function is_array;
 use function is_scalar;
 use function is_string;
-
-use Laminas\Code\Reflection\ClassReflection;
-
+use Laminas\Code\Reflection\Class_Reflection;
 use function ltrim;
 use function rtrim;
 use function sprintf;
@@ -29,143 +25,100 @@ use function str_replace;
 use function strrpos;
 use function strtolower;
 use function substr;
-
-class ClassGenerator extends AbstractGenerator implements TraitUsageInterface
+class Class_Generator extends Abstract_Generator implements Trait_Usage_Interface
 {
-    public const OBJECT_TYPE        = 'class';
+    public const OBJECT_TYPE = 'class';
     public const IMPLEMENTS_KEYWORD = 'implements';
-    public const FLAG_ABSTRACT      = 0x01;
-    public const FLAG_FINAL         = 0x02;
-    public const FLAG_READONLY      = 0x04;
-    private const CONSTRUCTOR_NAME  = '__construct';
-
-    protected ?FileGenerator $containingFileGenerator = null;
-
-    protected ?string $namespaceName = null;
-
-    protected ?DocBlockGenerator $docBlock = null;
-
+    public const FLAG_ABSTRACT = 0x1;
+    public const FLAG_FINAL = 0x2;
+    public const FLAG_READONLY = 0x4;
+    private const CONSTRUCTOR_NAME = '__construct';
+    protected ?File_Generator $containing_file_generator = null;
+    protected ?string $namespace_name = null;
+    protected ?Doc_Block_Generator $doc_block = null;
     protected string $name = '';
-
-    protected int $flags = 0x00;
-
+    protected int $flags = 0x0;
     /** @psalm-var ?class-string */
-    protected ?string $extendedClass = null;
-
+    protected ?string $extended_class = null;
     /**
      * Array of implemented interface names
      *
      * @var string[]
      * @psalm-var array<class-string>
      */
-    protected array $implementedInterfaces = [];
-
+    protected array $implemented_interfaces = [];
     /** @var PropertyGenerator[] */
     protected array $properties = [];
-
     /** @var PropertyGenerator[] */
     protected array $constants = [];
-
     /** @var MethodGenerator[] */
     protected array $methods = [];
-
     /** @var TraitUsageGenerator Object to encapsulate trait usage logic */
-    protected TraitUsageGenerator $traitUsageGenerator;
-
+    protected Trait_Usage_Generator $trait_usage_generator;
     /**
      * Build a Code Generation Php Object from a Class Reflection
      */
-    public static function fromReflection(ClassReflection $classReflection): static
+    public static function from_reflection(Class_Reflection $class_reflection): static
     {
-        $cg = new static($classReflection->getName());
-
-        $cg->setSourceContent($cg->getSourceContent());
-        $cg->setSourceDirty(false);
-
-        $docBlock = $classReflection->getDocBlock();
-
-        if ($docBlock) {
-            $cg->setDocBlock(DocBlockGenerator::fromReflection($docBlock));
+        $cg = new static($class_reflection->get_name());
+        $cg->set_source_content($cg->get_source_content());
+        $cg->set_source_dirty(false);
+        $doc_block = $class_reflection->get_doc_block();
+        if ($doc_block) {
+            $cg->set_doc_block(Doc_Block_Generator::from_reflection($doc_block));
         }
-
-        $cg->setAbstract($classReflection->isAbstract());
-        $cg->setFinal($classReflection->isFinal());
-        $cg->setReadonly($classReflection->isReadonly());
-
+        $cg->set_abstract($class_reflection->is_abstract());
+        $cg->set_final($class_reflection->is_final());
+        $cg->set_readonly($class_reflection->is_readonly());
         // set the namespace
-        if ($classReflection->inNamespace()) {
-            $cg->setNamespaceName($classReflection->getNamespaceName());
+        if ($class_reflection->in_namespace()) {
+            $cg->set_namespace_name($class_reflection->get_namespace_name());
         }
-
-        $parentClass = $classReflection->getParentClass();
-        $interfaces  = $classReflection->getInterfaces();
-
-        if ($parentClass) {
-            $cg->setExtendedClass($parentClass->getName());
-
-            $interfaces = array_diff($interfaces, $parentClass->getInterfaces());
+        $parent_class = $class_reflection->get_parent_class();
+        $interfaces = $class_reflection->get_interfaces();
+        if ($parent_class) {
+            $cg->set_extended_class($parent_class->get_name());
+            $interfaces = array_diff($interfaces, $parent_class->get_interfaces());
         }
-
-        $interfaceNames = [];
+        $interface_names = [];
         foreach ($interfaces as $interface) {
-            $interfaceNames[] = $interface->getName();
+            $interface_names[] = $interface->get_name();
         }
-
-        $cg->setImplementedInterfaces($interfaceNames);
-
+        $cg->set_implemented_interfaces($interface_names);
         $properties = [];
-
-        foreach ($classReflection->getProperties() as $reflectionProperty) {
-            if ($reflectionProperty->getDeclaringClass()->getName() == $classReflection->getName()) {
-                $properties[] = PropertyGenerator::fromReflection($reflectionProperty);
+        foreach ($class_reflection->get_properties() as $reflection_property) {
+            if ($reflection_property->get_declaring_class()->get_name() == $class_reflection->get_name()) {
+                $properties[] = Property_Generator::from_reflection($reflection_property);
             }
         }
-
-        $cg->addProperties($properties);
-
+        $cg->add_properties($properties);
         $constants = [];
-
-        foreach ($classReflection->getReflectionConstants() as $constReflection) {
-            $constants[] = new PropertyGenerator(
-                $constReflection->getName(),
-                new PropertyValueGenerator($constReflection->getValue()),
-                $constReflection->isFinal()
-                    ? [PropertyGenerator::FLAG_CONSTANT, PropertyGenerator::FLAG_FINAL]
-                    : [PropertyGenerator::FLAG_CONSTANT]
-            );
+        foreach ($class_reflection->get_reflection_constants() as $const_reflection) {
+            $constants[] = new Property_Generator($const_reflection->get_name(), new Property_Value_Generator($const_reflection->get_value()), $const_reflection->is_final() ? [Property_Generator::FLAG_CONSTANT, Property_Generator::FLAG_FINAL] : [Property_Generator::FLAG_CONSTANT]);
         }
-
-        $cg->addConstants($constants);
-
+        $cg->add_constants($constants);
         $methods = [];
-
-        foreach ($classReflection->getMethods() as $reflectionMethod) {
-            $className     = $cg->getName();
-            $namespaceName = $cg->getNamespaceName();
-            if ($namespaceName !== null) {
-                $className = $namespaceName . '\\' . $className;
+        foreach ($class_reflection->get_methods() as $reflection_method) {
+            $class_name = $cg->get_name();
+            $namespace_name = $cg->get_namespace_name();
+            if ($namespace_name !== null) {
+                $class_name = $namespace_name . '\\' . $class_name;
             }
-
-            if ($reflectionMethod->getDeclaringClass()->getName() == $className) {
-                $method = MethodGenerator::fromReflection($reflectionMethod);
-
-                if (self::CONSTRUCTOR_NAME === strtolower($method->getName())) {
-                    foreach ($method->getParameters() as $parameter) {
-                        if ($parameter instanceof PromotedParameterGenerator) {
-                            $cg->removeProperty($parameter->getName());
+            if ($reflection_method->get_declaring_class()->get_name() == $class_name) {
+                $method = Method_Generator::from_reflection($reflection_method);
+                if (self::CONSTRUCTOR_NAME === strtolower($method->get_name())) {
+                    foreach ($method->get_parameters() as $parameter) {
+                        if ($parameter instanceof Promoted_Parameter_Generator) {
+                            $cg->remove_property($parameter->get_name());
                         }
                     }
                 }
-
                 $methods[] = $method;
             }
         }
-
-        $cg->addMethods($methods);
-
+        $cg->add_methods($methods);
         return $cg;
     }
-
     /**
      * Generate from array
      *
@@ -183,49 +136,44 @@ class ClassGenerator extends AbstractGenerator implements TraitUsageInterface
      * @configkey methods
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromArray(array $array): static
+    public static function from_array(array $array): static
     {
-        if (! isset($array['name'])) {
-            throw new Exception\InvalidArgumentException(
-                'Class generator requires that a name is provided for this object'
-            );
+        if (!isset($array['name'])) {
+            throw new Exception\InvalidArgumentException('Class generator requires that a name is provided for this object');
         }
-
         $cg = new static($array['name']);
         foreach ($array as $name => $value) {
             // normalize key
             switch (strtolower(str_replace(['.', '-', '_'], '', $name))) {
                 case 'containingfile':
-                    $cg->setContainingFileGenerator($value);
+                    $cg->set_containing_file_generator($value);
                     break;
                 case 'namespacename':
-                    $cg->setNamespaceName($value);
+                    $cg->set_namespace_name($value);
                     break;
                 case 'docblock':
-                    $docBlock = $value instanceof DocBlockGenerator ? $value : DocBlockGenerator::fromArray($value);
-                    $cg->setDocBlock($docBlock);
+                    $doc_block = $value instanceof Doc_Block_Generator ? $value : Doc_Block_Generator::from_array($value);
+                    $cg->set_doc_block($doc_block);
                     break;
                 case 'flags':
-                    $cg->setFlags($value);
+                    $cg->set_flags($value);
                     break;
                 case 'extendedclass':
-                    $cg->setExtendedClass($value);
+                    $cg->set_extended_class($value);
                     break;
                 case 'implementedinterfaces':
-                    $cg->setImplementedInterfaces($value);
+                    $cg->set_implemented_interfaces($value);
                     break;
                 case 'properties':
-                    $cg->addProperties($value);
+                    $cg->add_properties($value);
                     break;
                 case 'methods':
-                    $cg->addMethods($value);
+                    $cg->add_methods($value);
                     break;
             }
         }
-
         return $cg;
     }
-
     /**
      * @param string                               $name
      * @param string                               $namespaceName
@@ -237,309 +185,247 @@ class ClassGenerator extends AbstractGenerator implements TraitUsageInterface
      * @param MethodGenerator[]|string[]|array[]   $methods
      * @param DocBlockGenerator                    $docBlock
      */
-    public function __construct(
-        $name = null,
-        $namespaceName = null,
-        $flags = null,
-        $extends = null,
-        array $interfaces = [],
-        array $properties = [],
-        array $methods = [],
-        $docBlock = null
-    ) {
-        $this->traitUsageGenerator = new TraitUsageGenerator($this);
-
+    public function __construct($name = null, $namespace_name = null, $flags = null, $extends = null, array $interfaces = [], array $properties = [], array $methods = [], $doc_block = null)
+    {
+        $this->trait_usage_generator = new Trait_Usage_Generator($this);
         if ($name !== null) {
-            $this->setName($name);
+            $this->set_name($name);
         }
-        if ($namespaceName !== null) {
-            $this->setNamespaceName($namespaceName);
+        if ($namespace_name !== null) {
+            $this->set_namespace_name($namespace_name);
         }
         if ($flags !== null) {
-            $this->setFlags($flags);
+            $this->set_flags($flags);
         }
         if ($properties !== []) {
-            $this->addProperties($properties);
+            $this->add_properties($properties);
         }
         if ($extends !== null) {
-            $this->setExtendedClass($extends);
+            $this->set_extended_class($extends);
         }
         if ($interfaces !== []) {
-            $this->setImplementedInterfaces($interfaces);
+            $this->set_implemented_interfaces($interfaces);
         }
         if ($methods !== []) {
-            $this->addMethods($methods);
+            $this->add_methods($methods);
         }
-        if ($docBlock !== null) {
-            $this->setDocBlock($docBlock);
+        if ($doc_block !== null) {
+            $this->set_doc_block($doc_block);
         }
     }
-
     /**
      * @param  string $name
      */
-    public function setName($name): static
+    public function set_name($name): static
     {
         if (str_contains($name, '\\')) {
             $namespace = substr($name, 0, strrpos($name, '\\'));
-            $name      = substr($name, strrpos($name, '\\') + 1);
-            $this->setNamespaceName($namespace);
+            $name = substr($name, strrpos($name, '\\') + 1);
+            $this->set_namespace_name($namespace);
         }
-
         $this->name = $name;
         return $this;
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return $this->name;
     }
-
-    public function setNamespaceName(?string $namespaceName): static
+    public function set_namespace_name(?string $namespace_name): static
     {
-        $this->namespaceName = $namespaceName;
+        $this->namespace_name = $namespace_name;
         return $this;
     }
-
-    public function getNamespaceName(): ?string
+    public function get_namespace_name(): ?string
     {
-        return $this->namespaceName;
+        return $this->namespace_name;
     }
-
-    public function setContainingFileGenerator(FileGenerator $fileGenerator): static
+    public function set_containing_file_generator(File_Generator $file_generator): static
     {
-        $this->containingFileGenerator = $fileGenerator;
+        $this->containing_file_generator = $file_generator;
         return $this;
     }
-
-    public function getContainingFileGenerator(): ?\Laminas\Code\Generator\FileGenerator
+    public function get_containing_file_generator(): ?\Laminas\Code\Generator\File_Generator
     {
-        return $this->containingFileGenerator;
+        return $this->containing_file_generator;
     }
-
-    public function setDocBlock(DocBlockGenerator $docBlock): static
+    public function set_doc_block(Doc_Block_Generator $doc_block): static
     {
-        $this->docBlock = $docBlock;
+        $this->doc_block = $doc_block;
         return $this;
     }
-
-    public function getDocBlock(): ?\Laminas\Code\Generator\DocBlockGenerator
+    public function get_doc_block(): ?\Laminas\Code\Generator\Doc_Block_Generator
     {
-        return $this->docBlock;
+        return $this->doc_block;
     }
-
     /**
      * @param  int[]|int $flags
      */
-    public function setFlags($flags): static
+    public function set_flags($flags): static
     {
         if (is_array($flags)) {
-            $flagsArray = $flags;
-            $flags      = 0x00;
-            foreach ($flagsArray as $flag) {
+            $flags_array = $flags;
+            $flags = 0x0;
+            foreach ($flags_array as $flag) {
                 $flags |= $flag;
             }
         }
         // check that visibility is one of three
         $this->flags = $flags;
-
         return $this;
     }
-
     /**
      * @param  int $flag
      */
-    public function addFlag($flag): static
+    public function add_flag($flag): static
     {
-        $this->setFlags($this->flags | $flag);
+        $this->set_flags($this->flags | $flag);
         return $this;
     }
-
     /**
      * @param  int $flag
      */
-    public function removeFlag($flag): static
+    public function remove_flag($flag): static
     {
-        $this->setFlags($this->flags & ~$flag);
+        $this->set_flags($this->flags & ~$flag);
         return $this;
     }
-
     /**
      * @param  bool $isAbstract
      * @return static
      */
-    public function setAbstract($isAbstract)
+    public function set_abstract($is_abstract)
     {
-        return $isAbstract ? $this->addFlag(self::FLAG_ABSTRACT) : $this->removeFlag(self::FLAG_ABSTRACT);
+        return $is_abstract ? $this->add_flag(self::FLAG_ABSTRACT) : $this->remove_flag(self::FLAG_ABSTRACT);
     }
-
-    public function isAbstract(): bool
+    public function is_abstract(): bool
     {
         return (bool) ($this->flags & self::FLAG_ABSTRACT);
     }
-
     /**
      * @param  bool $isFinal
      * @return static
      */
-    public function setFinal($isFinal)
+    public function set_final($is_final)
     {
-        return $isFinal ? $this->addFlag(self::FLAG_FINAL) : $this->removeFlag(self::FLAG_FINAL);
+        return $is_final ? $this->add_flag(self::FLAG_FINAL) : $this->remove_flag(self::FLAG_FINAL);
     }
-
-    public function isFinal(): bool
+    public function is_final(): bool
     {
         return (bool) ($this->flags & self::FLAG_FINAL);
     }
-
-    public function setReadonly(bool $isReadonly): self
+    public function set_readonly(bool $is_readonly): self
     {
-        return $isReadonly ? $this->addFlag(self::FLAG_READONLY) : $this->removeFlag(self::FLAG_READONLY);
+        return $is_readonly ? $this->add_flag(self::FLAG_READONLY) : $this->remove_flag(self::FLAG_READONLY);
     }
-
-    public function isReadonly(): bool
+    public function is_readonly(): bool
     {
         return (bool) ($this->flags & self::FLAG_READONLY);
     }
-
     /**
      * @psalm-param ?class-string $extendedClass
      */
-    public function setExtendedClass(?string $extendedClass): static
+    public function set_extended_class(?string $extended_class): static
     {
-        $this->extendedClass = $extendedClass;
+        $this->extended_class = $extended_class;
         return $this;
     }
-
     /**
      * @psalm-return ?class-string
      */
-    public function getExtendedClass(): ?string
+    public function get_extended_class(): ?string
     {
-        return $this->extendedClass;
+        return $this->extended_class;
     }
-
-    public function hasExtentedClass(): bool
+    public function has_extented_class(): bool
     {
-        return ! empty($this->extendedClass);
+        return !empty($this->extended_class);
     }
-
-    public function removeExtentedClass(): static
+    public function remove_extented_class(): static
     {
-        $this->setExtendedClass(null);
+        $this->set_extended_class(null);
         return $this;
     }
-
     /**
      * @param string[] $implementedInterfaces
      * @psalm-param array<class-string> $implementedInterfaces
      */
-    public function setImplementedInterfaces(array $implementedInterfaces): static
+    public function set_implemented_interfaces(array $implemented_interfaces): static
     {
-        $this->implementedInterfaces = $implementedInterfaces;
+        $this->implemented_interfaces = $implemented_interfaces;
         return $this;
     }
-
     /**
      * @return string[]
      * @psalm-return array<class-string>
      */
-    public function getImplementedInterfaces(): array
+    public function get_implemented_interfaces(): array
     {
-        return $this->implementedInterfaces;
+        return $this->implemented_interfaces;
     }
-
     /**
      * @psalm-param class-string $implementedInterface
      */
-    public function hasImplementedInterface(string $implementedInterface): bool
+    public function has_implemented_interface(string $implemented_interface): bool
     {
-        $interfaceType = TypeGenerator::fromTypeString($implementedInterface);
-
-        return (bool) array_filter(
-            array_map([TypeGenerator::class, 'fromTypeString'], $this->implementedInterfaces),
-            $interfaceType->equals(...)
-        );
+        $interface_type = Type_Generator::from_type_string($implemented_interface);
+        return (bool) array_filter(array_map([Type_Generator::class, 'fromTypeString'], $this->implemented_interfaces), $interface_type->equals(...));
     }
-
     /**
      * @psalm-param class-string $implementedInterface
      */
-    public function removeImplementedInterface(string $implementedInterface): static
+    public function remove_implemented_interface(string $implemented_interface): static
     {
-        $interfaceType = TypeGenerator::fromTypeString($implementedInterface);
-
-        $this->implementedInterfaces = array_filter(
-            $this->implementedInterfaces,
-            static fn (string $interface): bool => ! TypeGenerator::fromTypeString($interface)->equals($interfaceType)
-        );
-
+        $interface_type = Type_Generator::from_type_string($implemented_interface);
+        $this->implemented_interfaces = array_filter($this->implemented_interfaces, static fn(string $interface): bool => !Type_Generator::from_type_string($interface)->equals($interface_type));
         return $this;
     }
-
     /**
      * @param  string $constantName
      * @return PropertyGenerator|false
      */
-    public function getConstant($constantName)
+    public function get_constant($constant_name)
     {
-        return $this->constants[$constantName] ?? false;
+        return $this->constants[$constant_name] ?? false;
     }
-
     /**
      * @return PropertyGenerator[] indexed by constant name
      */
-    public function getConstants(): array
+    public function get_constants(): array
     {
         return $this->constants;
     }
-
     /**
      * @param  string $constantName
      */
-    public function removeConstant($constantName): static
+    public function remove_constant($constant_name): static
     {
-        unset($this->constants[$constantName]);
-
+        unset($this->constants[$constant_name]);
         return $this;
     }
-
     /**
      * @param  string $constantName
      */
-    public function hasConstant($constantName): bool
+    public function has_constant($constant_name): bool
     {
-        return isset($this->constants[$constantName]);
+        return isset($this->constants[$constant_name]);
     }
-
     /**
      * Add constant from PropertyGenerator
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function addConstantFromGenerator(PropertyGenerator $constant): static
+    public function add_constant_from_generator(Property_Generator $constant): static
     {
-        $constantName = $constant->getName();
-
-        if (isset($this->constants[$constantName])) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'A constant by name %s already exists in this class.',
-                $constantName
-            ));
+        $constant_name = $constant->get_name();
+        if (isset($this->constants[$constant_name])) {
+            throw new Exception\InvalidArgumentException(sprintf('A constant by name %s already exists in this class.', $constant_name));
         }
-
-        if (! $constant->isConst()) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'The value %s is not defined as a constant.',
-                $constantName
-            ));
+        if (!$constant->is_const()) {
+            throw new Exception\InvalidArgumentException(sprintf('The value %s is not defined as a constant.', $constant_name));
         }
-
-        $this->constants[$constantName] = $constant;
-
+        $this->constants[$constant_name] = $constant;
         return $this;
     }
-
     /**
      * Add Constant
      *
@@ -548,64 +434,44 @@ class ClassGenerator extends AbstractGenerator implements TraitUsageInterface
      * @return static
      * @throws Exception\InvalidArgumentException
      */
-    public function addConstant($name, $value, bool $isFinal = false)
+    public function add_constant($name, $value, bool $is_final = false)
     {
-        if (empty($name) || ! is_string($name)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects string for name',
-                __METHOD__
-            ));
+        if (empty($name) || !is_string($name)) {
+            throw new Exception\InvalidArgumentException(sprintf('%s expects string for name', __METHOD__));
         }
-
-        $this->validateConstantValue($value);
-
-        return $this->addConstantFromGenerator(
-            new PropertyGenerator(
-                $name,
-                new PropertyValueGenerator($value),
-                $isFinal
-                    ? PropertyGenerator::FLAG_CONSTANT | PropertyGenerator::FLAG_FINAL
-                    : PropertyGenerator::FLAG_CONSTANT
-            )
-        );
+        $this->validate_constant_value($value);
+        return $this->add_constant_from_generator(new Property_Generator($name, new Property_Value_Generator($value), $is_final ? Property_Generator::FLAG_CONSTANT | Property_Generator::FLAG_FINAL : Property_Generator::FLAG_CONSTANT));
     }
-
     /**
      * @param  PropertyGenerator[]|array[] $constants
      */
-    public function addConstants(array $constants): static
+    public function add_constants(array $constants): static
     {
         foreach ($constants as $constant) {
-            if ($constant instanceof PropertyGenerator) {
-                $this->addPropertyFromGenerator($constant);
-            } else {
-                if (is_array($constant)) {
-                    $this->addConstant(...array_values($constant));
-                }
+            if ($constant instanceof Property_Generator) {
+                $this->add_property_from_generator($constant);
+            } else if (is_array($constant)) {
+                $this->add_constant(...array_values($constant));
             }
         }
-
         return $this;
     }
-
     /**
      * @param  PropertyGenerator[]|string[]|array[] $properties
      */
-    public function addProperties(array $properties): static
+    public function add_properties(array $properties): static
     {
         foreach ($properties as $property) {
-            if ($property instanceof PropertyGenerator) {
-                $this->addPropertyFromGenerator($property);
+            if ($property instanceof Property_Generator) {
+                $this->add_property_from_generator($property);
             } elseif (is_string($property)) {
-                $this->addProperty($property);
+                $this->add_property($property);
             } else {
-                $this->addProperty(...array_values($property));
+                $this->add_property(...array_values($property));
             }
         }
-
         return $this;
     }
-
     /**
      * Add Property from scalars
      *
@@ -615,160 +481,132 @@ class ClassGenerator extends AbstractGenerator implements TraitUsageInterface
      * @throws Exception\InvalidArgumentException
      * @return static
      */
-    public function addProperty($name, $defaultValue = null, $flags = PropertyGenerator::FLAG_PUBLIC)
+    public function add_property($name, $default_value = null, $flags = Property_Generator::FLAG_PUBLIC)
     {
-        if (! is_string($name)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s::%s expects string for name',
-                static::class,
-                __FUNCTION__
-            ));
+        if (!is_string($name)) {
+            throw new Exception\InvalidArgumentException(sprintf('%s::%s expects string for name', static::class, __FUNCTION__));
         }
-
         // backwards compatibility
         // @todo remove this on next major version
-        if ($flags === PropertyGenerator::FLAG_CONSTANT) {
-            return $this->addConstant($name, $defaultValue);
+        if ($flags === Property_Generator::FLAG_CONSTANT) {
+            return $this->add_constant($name, $default_value);
         }
-
-        return $this->addPropertyFromGenerator(new PropertyGenerator($name, $defaultValue, $flags));
+        return $this->add_property_from_generator(new Property_Generator($name, $default_value, $flags));
     }
-
     /**
      * Add property from PropertyGenerator
      *
      * @throws Exception\InvalidArgumentException
      * @return static
      */
-    public function addPropertyFromGenerator(PropertyGenerator $property)
+    public function add_property_from_generator(Property_Generator $property)
     {
-        $propertyName = $property->getName();
-
-        if (isset($this->properties[$propertyName])) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'A property by name %s already exists in this class.',
-                $propertyName
-            ));
+        $property_name = $property->get_name();
+        if (isset($this->properties[$property_name])) {
+            throw new Exception\InvalidArgumentException(sprintf('A property by name %s already exists in this class.', $property_name));
         }
-
         // backwards compatibility
         // @todo remove this on next major version
-        if ($property->isConst()) {
-            return $this->addConstantFromGenerator($property);
+        if ($property->is_const()) {
+            return $this->add_constant_from_generator($property);
         }
-
-        $this->properties[$propertyName] = $property;
+        $this->properties[$property_name] = $property;
         return $this;
     }
-
     /**
      * @return PropertyGenerator[]
      */
-    public function getProperties(): array
+    public function get_properties(): array
     {
         return $this->properties;
     }
-
     /**
      * @param  string $propertyName
      * @return PropertyGenerator|false
      */
-    public function getProperty($propertyName)
+    public function get_property($property_name)
     {
-        foreach ($this->getProperties() as $property) {
-            if ($property->getName() == $propertyName) {
+        foreach ($this->get_properties() as $property) {
+            if ($property->get_name() == $property_name) {
                 return $property;
             }
         }
-
         return false;
     }
-
     /** @inheritDoc */
-    public function addUse($use, $useAlias = null): static
+    public function add_use($use, $use_alias = null): static
     {
-        $this->traitUsageGenerator->addUse($use, $useAlias);
+        $this->trait_usage_generator->add_use($use, $use_alias);
         return $this;
     }
-
     /**
      * @param string $use
      * @return bool
      */
-    public function hasUse($use)
+    public function has_use($use)
     {
-        return $this->traitUsageGenerator->hasUse($use);
+        return $this->trait_usage_generator->has_use($use);
     }
-
     /**
      * @param  string $use
      */
-    public function removeUse($use): static
+    public function remove_use($use): static
     {
-        $this->traitUsageGenerator->removeUse($use);
+        $this->trait_usage_generator->remove_use($use);
         return $this;
     }
-
     /**
      * @param string $use
      * @return bool
      */
-    public function hasUseAlias($use)
+    public function has_use_alias($use)
     {
-        return $this->traitUsageGenerator->hasUseAlias($use);
+        return $this->trait_usage_generator->has_use_alias($use);
     }
-
     /**
      * @param string $use
      */
-    public function removeUseAlias($use): static
+    public function remove_use_alias($use): static
     {
-        $this->traitUsageGenerator->removeUseAlias($use);
+        $this->trait_usage_generator->remove_use_alias($use);
         return $this;
     }
-
     /** @inheritDoc */
-    public function getUses()
+    public function get_uses()
     {
-        return $this->traitUsageGenerator->getUses();
+        return $this->trait_usage_generator->get_uses();
     }
-
     /**
      * @param  string $propertyName
      */
-    public function removeProperty($propertyName): static
+    public function remove_property($property_name): static
     {
-        unset($this->properties[$propertyName]);
-
+        unset($this->properties[$property_name]);
         return $this;
     }
-
     /**
      * @param  string $propertyName
      */
-    public function hasProperty($propertyName): bool
+    public function has_property($property_name): bool
     {
-        return isset($this->properties[$propertyName]);
+        return isset($this->properties[$property_name]);
     }
-
     /**
      * @param  MethodGenerator[]|string[]|array[] $methods
      */
-    public function addMethods(array $methods): static
+    public function add_methods(array $methods): static
     {
         foreach ($methods as $method) {
-            if ($method instanceof MethodGenerator) {
-                $this->addMethodFromGenerator($method);
+            if ($method instanceof Method_Generator) {
+                $this->add_method_from_generator($method);
             } elseif (is_string($method)) {
-                $this->addMethod($method);
+                $this->add_method($method);
             } else {
-                $this->addMethod(...array_values($method));
+                $this->add_method(...array_values($method));
             }
         }
-
         return $this;
     }
-
     /**
      * Add Method from scalars
      *
@@ -780,340 +618,256 @@ class ClassGenerator extends AbstractGenerator implements TraitUsageInterface
      * @return static
      * @throws Exception\InvalidArgumentException
      */
-    public function addMethod(
-        $name,
-        array $parameters = [],
-        $flags = MethodGenerator::FLAG_PUBLIC,
-        $body = null,
-        $docBlock = null
-    ) {
-        if (! is_string($name)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s::%s expects string for name',
-                static::class,
-                __FUNCTION__
-            ));
+    public function add_method($name, array $parameters = [], $flags = Method_Generator::FLAG_PUBLIC, $body = null, $doc_block = null)
+    {
+        if (!is_string($name)) {
+            throw new Exception\InvalidArgumentException(sprintf('%s::%s expects string for name', static::class, __FUNCTION__));
         }
-
-        return $this->addMethodFromGenerator(new MethodGenerator($name, $parameters, $flags, $body, $docBlock));
+        return $this->add_method_from_generator(new Method_Generator($name, $parameters, $flags, $body, $doc_block));
     }
-
     /**
      * Add Method from MethodGenerator
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function addMethodFromGenerator(MethodGenerator $method): static
+    public function add_method_from_generator(Method_Generator $method): static
     {
-        $methodName = $method->getName();
-
-        if ($this->hasMethod($methodName)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'A method by name %s already exists in this class.',
-                $methodName
-            ));
+        $method_name = $method->get_name();
+        if ($this->has_method($method_name)) {
+            throw new Exception\InvalidArgumentException(sprintf('A method by name %s already exists in this class.', $method_name));
         }
-
-        if (self::CONSTRUCTOR_NAME !== strtolower($methodName)) {
-            foreach ($method->getParameters() as $parameter) {
-                if ($parameter instanceof PromotedParameterGenerator) {
-                    throw new Exception\InvalidArgumentException(
-                        'Promoted parameter can only be added to constructor.'
-                    );
+        if (self::CONSTRUCTOR_NAME !== strtolower($method_name)) {
+            foreach ($method->get_parameters() as $parameter) {
+                if ($parameter instanceof Promoted_Parameter_Generator) {
+                    throw new Exception\InvalidArgumentException('Promoted parameter can only be added to constructor.');
                 }
             }
         }
-
-        $this->methods[strtolower($methodName)] = $method;
+        $this->methods[strtolower($method_name)] = $method;
         return $this;
     }
-
     /**
      * @return MethodGenerator[]
      */
-    public function getMethods(): array
+    public function get_methods(): array
     {
         return $this->methods;
     }
-
     /**
      * @param  string $methodName
      * @return MethodGenerator|false
      */
-    public function getMethod($methodName)
+    public function get_method($method_name)
     {
-        return $this->hasMethod($methodName) ? $this->methods[strtolower($methodName)] : false;
+        return $this->has_method($method_name) ? $this->methods[strtolower($method_name)] : false;
     }
-
     /**
      * @param  string $methodName
      */
-    public function removeMethod($methodName): static
+    public function remove_method($method_name): static
     {
-        unset($this->methods[strtolower($methodName)]);
-
+        unset($this->methods[strtolower($method_name)]);
         return $this;
     }
-
     /**
      * @param  string $methodName
      */
-    public function hasMethod($methodName): bool
+    public function has_method($method_name): bool
     {
-        return isset($this->methods[strtolower($methodName)]);
+        return isset($this->methods[strtolower($method_name)]);
     }
-
     /**
      * @inheritDoc
      */
-    public function addTrait($trait): static
+    public function add_trait($trait): static
     {
-        $this->traitUsageGenerator->addTrait($trait);
+        $this->trait_usage_generator->add_trait($trait);
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    public function addTraits(array $traits): static
+    public function add_traits(array $traits): static
     {
-        $this->traitUsageGenerator->addTraits($traits);
+        $this->trait_usage_generator->add_traits($traits);
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    public function hasTrait($traitName)
+    public function has_trait($trait_name)
     {
-        return $this->traitUsageGenerator->hasTrait($traitName);
+        return $this->trait_usage_generator->has_trait($trait_name);
     }
-
     /**
      * @inheritDoc
      */
-    public function getTraits()
+    public function get_traits()
     {
-        return $this->traitUsageGenerator->getTraits();
+        return $this->trait_usage_generator->get_traits();
     }
-
     /**
      * @inheritDoc
      */
-    public function removeTrait($traitName)
+    public function remove_trait($trait_name)
     {
-        return $this->traitUsageGenerator->removeTrait($traitName);
+        return $this->trait_usage_generator->remove_trait($trait_name);
     }
-
     /**
      * @inheritDoc
      */
-    public function addTraitAlias($method, $alias, $visibility = null): static
+    public function add_trait_alias($method, $alias, $visibility = null): static
     {
-        $this->traitUsageGenerator->addTraitAlias($method, $alias, $visibility);
+        $this->trait_usage_generator->add_trait_alias($method, $alias, $visibility);
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    public function getTraitAliases()
+    public function get_trait_aliases()
     {
-        return $this->traitUsageGenerator->getTraitAliases();
+        return $this->trait_usage_generator->get_trait_aliases();
     }
-
     /**
      * @inheritDoc
      */
-    public function addTraitOverride($method, $traitsToReplace): static
+    public function add_trait_override($method, $traits_to_replace): static
     {
-        $this->traitUsageGenerator->addTraitOverride($method, $traitsToReplace);
+        $this->trait_usage_generator->add_trait_override($method, $traits_to_replace);
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    public function removeTraitOverride($method, $overridesToRemove = null): static
+    public function remove_trait_override($method, $overrides_to_remove = null): static
     {
-        $this->traitUsageGenerator->removeTraitOverride($method, $overridesToRemove);
-
+        $this->trait_usage_generator->remove_trait_override($method, $overrides_to_remove);
         return $this;
     }
-
     /**
      * @inheritDoc
      */
-    public function getTraitOverrides()
+    public function get_trait_overrides()
     {
-        return $this->traitUsageGenerator->getTraitOverrides();
+        return $this->trait_usage_generator->get_trait_overrides();
     }
-
     /**
      * @return bool
      */
-    public function isSourceDirty()
+    public function is_source_dirty()
     {
-        if (($docBlock = $this->getDocBlock()) && $docBlock->isSourceDirty()) {
+        if (($doc_block = $this->get_doc_block()) && $doc_block->is_source_dirty()) {
             return true;
         }
-
-        foreach ($this->getProperties() as $property) {
-            if ($property->isSourceDirty()) {
+        foreach ($this->get_properties() as $property) {
+            if ($property->is_source_dirty()) {
                 return true;
             }
         }
-
-        foreach ($this->getMethods() as $method) {
-            if ($method->isSourceDirty()) {
+        foreach ($this->get_methods() as $method) {
+            if ($method->is_source_dirty()) {
                 return true;
             }
         }
-
-        return parent::isSourceDirty();
+        return parent::is_source_dirty();
     }
-
     /**
      * @inheritDoc
      */
     public function generate()
     {
-        if (! $this->isSourceDirty()) {
-            $output = $this->getSourceContent();
-            if (! empty($output)) {
+        if (!$this->is_source_dirty()) {
+            $output = $this->get_source_content();
+            if (!empty($output)) {
                 return $output;
             }
         }
-
         $output = '';
-
-        if (null !== ($namespace = $this->getNamespaceName())) {
+        if (null !== $namespace = $this->get_namespace_name()) {
             $output .= 'namespace ' . $namespace . ';' . self::LINE_FEED . self::LINE_FEED;
         }
-
-        $uses = $this->getUses();
-
-        if (! empty($uses)) {
+        $uses = $this->get_uses();
+        if (!empty($uses)) {
             foreach ($uses as $use) {
                 $output .= 'use ' . $use . ';' . self::LINE_FEED;
             }
-
             $output .= self::LINE_FEED;
         }
-
-        if (null !== ($docBlock = $this->getDocBlock())) {
-            $docBlock->setIndentation('');
-            $output .= $docBlock->generate();
+        if (null !== $doc_block = $this->get_doc_block()) {
+            $doc_block->set_indentation('');
+            $output .= $doc_block->generate();
         }
-
-        if ($this->isAbstract()) {
+        if ($this->is_abstract()) {
             $output .= 'abstract ';
-        } elseif ($this->isFinal()) {
+        } elseif ($this->is_final()) {
             $output .= 'final ';
         }
-
-        if ($this->isReadonly()) {
+        if ($this->is_readonly()) {
             $output .= 'readonly ';
         }
-
-        $output .= static::OBJECT_TYPE . ' ' . $this->getName();
-
-        if (! empty($this->extendedClass)) {
-            $output .= ' extends ' . $this->generateShortOrCompleteClassname($this->extendedClass);
+        $output .= static::OBJECT_TYPE . ' ' . $this->get_name();
+        if (!empty($this->extended_class)) {
+            $output .= ' extends ' . $this->generate_short_or_complete_classname($this->extended_class);
         }
-
-        $implemented = $this->getImplementedInterfaces();
-
-        if (! empty($implemented)) {
-            $implemented = array_map($this->generateShortOrCompleteClassname(...), $implemented);
-            $output     .= ' ' . static::IMPLEMENTS_KEYWORD . ' ' . implode(', ', $implemented);
+        $implemented = $this->get_implemented_interfaces();
+        if (!empty($implemented)) {
+            $implemented = array_map($this->generate_short_or_complete_classname(...), $implemented);
+            $output .= ' ' . static::IMPLEMENTS_KEYWORD . ' ' . implode(', ', $implemented);
         }
-
-        $output        .= self::LINE_FEED . '{' . self::LINE_FEED;
-        $traitUseOutput = rtrim($this->traitUsageGenerator->generate(), self::LINE_FEED);
-        $constants      = [];
-        $properties     = [];
-        $methods        = [];
-
-        foreach ($this->getConstants() as $constant) {
+        $output .= self::LINE_FEED . '{' . self::LINE_FEED;
+        $trait_use_output = rtrim($this->trait_usage_generator->generate(), self::LINE_FEED);
+        $constants = [];
+        $properties = [];
+        $methods = [];
+        foreach ($this->get_constants() as $constant) {
             $constants[] = $constant->generate();
         }
-
-        foreach ($this->getProperties() as $property) {
+        foreach ($this->get_properties() as $property) {
             $properties[] = $property->generate();
         }
-
-        foreach ($this->getMethods() as $method) {
+        foreach ($this->get_methods() as $method) {
             $methods[] = $method->generate();
         }
-
-        $contents = rtrim(
-            implode(
-                self::LINE_FEED . self::LINE_FEED,
-                array_filter([
-                    $traitUseOutput,
-                    implode(self::LINE_FEED . self::LINE_FEED, $constants),
-                    implode(self::LINE_FEED . self::LINE_FEED, $properties),
-                    implode(self::LINE_FEED, $methods),
-                ])
-            ),
-            self::LINE_FEED
-        );
-
-        return $output
-            . $contents
-            . ($contents === '' ? '' : self::LINE_FEED)
-            . '}'
-            . self::LINE_FEED;
+        $contents = rtrim(implode(self::LINE_FEED . self::LINE_FEED, array_filter([$trait_use_output, implode(self::LINE_FEED . self::LINE_FEED, $constants), implode(self::LINE_FEED . self::LINE_FEED, $properties), implode(self::LINE_FEED, $methods)])), self::LINE_FEED);
+        return $output . $contents . ($contents === '' ? '' : self::LINE_FEED) . '}' . self::LINE_FEED;
     }
-
     /**
      * @throws Exception\InvalidArgumentException
      */
-    private function validateConstantValue(mixed $value): void
+    private function validate_constant_value(mixed $value): void
     {
         if (null === $value || is_scalar($value)) {
             return;
         }
-
         if (is_array($value)) {
-            array_walk($value, $this->validateConstantValue(...));
-
+            array_walk($value, $this->validate_constant_value(...));
             return;
         }
-
-        throw new Exception\InvalidArgumentException(sprintf(
-            'Expected value for constant, value must be a "scalar" or "null", "%s" found',
-            get_debug_type($value)
-        ));
+        throw new Exception\InvalidArgumentException(sprintf('Expected value for constant, value must be a "scalar" or "null", "%s" found', get_debug_type($value)));
     }
-
-    private function generateShortOrCompleteClassname(string $fqnClassName): string
+    private function generate_short_or_complete_classname(string $fqn_class_name): string
     {
-        $fqnClassName     = ltrim($fqnClassName, '\\');
-        $parts            = explode('\\', $fqnClassName);
-        $className        = array_pop($parts);
-        $classNamespace   = implode('\\', $parts);
-        $currentNamespace = (string) $this->getNamespaceName();
-
-        if ($this->hasUseAlias($fqnClassName)) {
-            return $this->traitUsageGenerator->getUseAlias($fqnClassName);
+        $fqn_class_name = ltrim($fqn_class_name, '\\');
+        $parts = explode('\\', $fqn_class_name);
+        $class_name = array_pop($parts);
+        $class_namespace = implode('\\', $parts);
+        $current_namespace = (string) $this->get_namespace_name();
+        if ($this->has_use_alias($fqn_class_name)) {
+            return $this->trait_usage_generator->get_use_alias($fqn_class_name);
         }
-        if ($this->hasUseAlias($classNamespace)) {
-            $namespaceAlias = $this->traitUsageGenerator->getUseAlias($classNamespace);
-
-            return $namespaceAlias . '\\' . $className;
+        if ($this->has_use_alias($class_namespace)) {
+            $namespace_alias = $this->trait_usage_generator->get_use_alias($class_namespace);
+            return $namespace_alias . '\\' . $class_name;
         }
-        if ($this->traitUsageGenerator->isUseAlias($fqnClassName)) {
-            return $fqnClassName;
+        if ($this->trait_usage_generator->is_use_alias($fqn_class_name)) {
+            return $fqn_class_name;
         }
-        if ($this->traitUsageGenerator->isUseAlias($classNamespace)) {
-            return $fqnClassName;
+        if ($this->trait_usage_generator->is_use_alias($class_namespace)) {
+            return $fqn_class_name;
         }
-        if ($classNamespace === $currentNamespace || in_array($fqnClassName, $this->getUses())) {
-            return $className;
+        if ($class_namespace === $current_namespace || in_array($fqn_class_name, $this->get_uses())) {
+            return $class_name;
         }
-
-        return '\\' . $fqnClassName;
+        return '\\' . $fqn_class_name;
     }
 }

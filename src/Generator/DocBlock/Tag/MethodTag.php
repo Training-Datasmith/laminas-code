@@ -1,80 +1,64 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Laminas\Code\Generator\DocBlock\Tag;
+declare (strict_types=1);
+namespace Laminas\Code\Generator\Doc_Block\Tag;
 
 use function rtrim;
-
-class MethodTag extends AbstractTypeableTag implements TagInterface
+class Method_Tag extends Abstract_Typeable_Tag implements Tag_Interface
 {
     /** @var string|null */
-    protected $methodName;
-
+    protected $method_name;
     /** @var bool */
-    protected $isStatic = false;
-
+    protected $is_static = false;
     /**
      * @param string|null $methodName
      * @param string[]    $types
      * @param string      $description
      * @param bool        $isStatic
      */
-    public function __construct($methodName = null, $types = [], $description = null, $isStatic = false)
+    public function __construct($method_name = null, $types = [], $description = null, $is_static = false)
     {
-        if (! empty($methodName)) {
-            $this->setMethodName($methodName);
+        if (!empty($method_name)) {
+            $this->set_method_name($method_name);
         }
-
-        $this->setIsStatic((bool) $isStatic);
-
+        $this->set_is_static((bool) $is_static);
         parent::__construct($types, $description);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'method';
     }
-
     /**
      * @param bool $isStatic
      */
-    public function setIsStatic($isStatic): static
+    public function set_is_static($is_static): static
     {
-        $this->isStatic = $isStatic;
+        $this->is_static = $is_static;
         return $this;
     }
-
     /**
      * @return bool
      */
-    public function isStatic()
+    public function is_static()
     {
-        return $this->isStatic;
+        return $this->is_static;
     }
-
     /**
      * @param non-empty-string $methodName
      */
-    public function setMethodName($methodName): static
+    public function set_method_name($method_name): static
     {
-        $this->methodName = rtrim($methodName, ')(');
+        $this->method_name = rtrim($method_name, ')(');
         return $this;
     }
-
     /** @return string|null */
-    public function getMethodName()
+    public function get_method_name()
     {
-        return $this->methodName;
+        return $this->method_name;
     }
-
     /** @return non-empty-string */
     public function generate(): string
     {
-        return '@method'
-            . ($this->isStatic ? ' static' : '')
-            . (! empty($this->types) ? ' ' . $this->getTypesAsString() : '')
-            . (! empty($this->methodName) ? ' ' . $this->methodName . '()' : '')
-            . (! empty($this->description) ? ' ' . $this->description : '');
+        return '@method' . ($this->is_static ? ' static' : '') . (!empty($this->types) ? ' ' . $this->get_types_as_string() : '') . (!empty($this->method_name) ? ' ' . $this->method_name . '()' : '') . (!empty($this->description) ? ' ' . $this->description : '');
     }
 }

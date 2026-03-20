@@ -1,71 +1,53 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generator;
 
-use Laminas\Code\Reflection\ClassReflection;
-
+use Laminas\Code\Reflection\Class_Reflection;
 use function sprintf;
 use function str_replace;
 use function strtolower;
-
-class InterfaceGenerator extends ClassGenerator
+class Interface_Generator extends Class_Generator
 {
-    public const OBJECT_TYPE        = 'interface';
+    public const OBJECT_TYPE = 'interface';
     public const IMPLEMENTS_KEYWORD = 'extends';
-
     /**
      * Build a Code Generation Php Object from a Class Reflection
      */
-    public static function fromReflection(ClassReflection $classReflection): static
+    public static function from_reflection(Class_Reflection $class_reflection): static
     {
-        if (! $classReflection->isInterface()) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Class %s is not a interface',
-                $classReflection->getName()
-            ));
+        if (!$class_reflection->is_interface()) {
+            throw new Exception\InvalidArgumentException(sprintf('Class %s is not a interface', $class_reflection->get_name()));
         }
-
         // class generator
-        $cg      = new static($classReflection->getName());
+        $cg = new static($class_reflection->get_name());
         $methods = [];
-
-        $cg->setSourceContent($cg->getSourceContent());
-        $cg->setSourceDirty(false);
-
-        $docBlock = $classReflection->getDocBlock();
-
-        if ($docBlock) {
-            $cg->setDocBlock(DocBlockGenerator::fromReflection($docBlock));
+        $cg->set_source_content($cg->get_source_content());
+        $cg->set_source_dirty(false);
+        $doc_block = $class_reflection->get_doc_block();
+        if ($doc_block) {
+            $cg->set_doc_block(Doc_Block_Generator::from_reflection($doc_block));
         }
-
         // set the namespace
-        if ($classReflection->inNamespace()) {
-            $cg->setNamespaceName($classReflection->getNamespaceName());
+        if ($class_reflection->in_namespace()) {
+            $cg->set_namespace_name($class_reflection->get_namespace_name());
         }
-
-        foreach ($classReflection->getMethods() as $reflectionMethod) {
-            $className     = $cg->getName();
-            $namespaceName = $cg->getNamespaceName();
-            if ($namespaceName !== null) {
-                $className = $namespaceName . '\\' . $className;
+        foreach ($class_reflection->get_methods() as $reflection_method) {
+            $class_name = $cg->get_name();
+            $namespace_name = $cg->get_namespace_name();
+            if ($namespace_name !== null) {
+                $class_name = $namespace_name . '\\' . $class_name;
             }
-
-            if ($reflectionMethod->getDeclaringClass()->getName() == $className) {
-                $methods[] = MethodGenerator::fromReflection($reflectionMethod);
+            if ($reflection_method->get_declaring_class()->get_name() == $class_name) {
+                $methods[] = Method_Generator::from_reflection($reflection_method);
             }
         }
-
-        foreach ($classReflection->getConstants() as $name => $value) {
-            $cg->addConstant($name, $value);
+        foreach ($class_reflection->get_constants() as $name => $value) {
+            $cg->add_constant($name, $value);
         }
-
-        $cg->addMethods($methods);
-
+        $cg->add_methods($methods);
         return $cg;
     }
-
     /**
      * Generate from array
      *
@@ -80,62 +62,53 @@ class InterfaceGenerator extends ClassGenerator
      * @configkey methods
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromArray(array $array): static
+    public static function from_array(array $array): static
     {
-        if (! isset($array['name'])) {
-            throw new Exception\InvalidArgumentException(
-                'Class generator requires that a name is provided for this object'
-            );
+        if (!isset($array['name'])) {
+            throw new Exception\InvalidArgumentException('Class generator requires that a name is provided for this object');
         }
-
         $cg = new static($array['name']);
         foreach ($array as $name => $value) {
             // normalize key
             switch (strtolower(str_replace(['.', '-', '_'], '', $name))) {
                 case 'containingfile':
-                    $cg->setContainingFileGenerator($value);
+                    $cg->set_containing_file_generator($value);
                     break;
                 case 'namespacename':
-                    $cg->setNamespaceName($value);
+                    $cg->set_namespace_name($value);
                     break;
                 case 'docblock':
-                    $docBlock = $value instanceof DocBlockGenerator ? $value : DocBlockGenerator::fromArray($value);
-                    $cg->setDocBlock($docBlock);
+                    $doc_block = $value instanceof Doc_Block_Generator ? $value : Doc_Block_Generator::from_array($value);
+                    $cg->set_doc_block($doc_block);
                     break;
                 case 'methods':
-                    $cg->addMethods($value);
+                    $cg->add_methods($value);
                     break;
                 case 'constants':
-                    $cg->addConstants($value);
+                    $cg->add_constants($value);
                     break;
             }
         }
-
         return $cg;
     }
-
     /** @inheritDoc */
-    public function addPropertyFromGenerator(PropertyGenerator $property): static
+    public function add_property_from_generator(Property_Generator $property): static
     {
         return $this;
     }
-
     /** @inheritDoc */
-    public function addMethodFromGenerator(MethodGenerator $method)
+    public function add_method_from_generator(Method_Generator $method)
     {
-        $method->setInterface(true);
-
-        return parent::addMethodFromGenerator($method);
+        $method->set_interface(true);
+        return parent::add_method_from_generator($method);
     }
-
     /** @inheritDoc */
-    public function setExtendedClass($extendedClass): static
+    public function set_extended_class($extended_class): static
     {
         return $this;
     }
-
     /** @inheritDoc */
-    public function setAbstract($isAbstract): static
+    public function set_abstract($is_abstract): static
     {
         return $this;
     }

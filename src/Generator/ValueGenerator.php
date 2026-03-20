@@ -1,16 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generator;
 
 use function addcslashes;
 use function array_keys;
 use function array_merge;
 use function array_search;
-
 use ArrayObject as SplArrayObject;
-
 use function count;
 use function get_debug_type;
 use function get_defined_constants;
@@ -20,96 +17,77 @@ use function in_array;
 use function is_array;
 use function is_int;
 use function is_object;
-
 use Laminas\Code\Exception\InvalidArgumentException;
 use Laminas\Stdlib\ArrayObject as StdlibArrayObject;
-
 use function max;
 use function sprintf;
 use function str_contains;
 use function str_repeat;
-
 use Stringable;
-use UnitEnum;
-
-class ValueGenerator extends AbstractGenerator implements Stringable
+use Unit_Enum;
+class Value_Generator extends Abstract_Generator implements Stringable
 {
     /**#@+
      * Constant values
      */
-    public const TYPE_AUTO        = 'auto';
-    public const TYPE_BOOLEAN     = 'boolean';
-    public const TYPE_BOOL        = 'bool';
-    public const TYPE_NUMBER      = 'number';
-    public const TYPE_INTEGER     = 'integer';
-    public const TYPE_INT         = 'int';
-    public const TYPE_FLOAT       = 'float';
-    public const TYPE_DOUBLE      = 'double';
-    public const TYPE_STRING      = 'string';
-    public const TYPE_ARRAY       = 'array';
+    public const TYPE_AUTO = 'auto';
+    public const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_BOOL = 'bool';
+    public const TYPE_NUMBER = 'number';
+    public const TYPE_INTEGER = 'integer';
+    public const TYPE_INT = 'int';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_DOUBLE = 'double';
+    public const TYPE_STRING = 'string';
+    public const TYPE_ARRAY = 'array';
     public const TYPE_ARRAY_SHORT = 'array_short';
-    public const TYPE_ARRAY_LONG  = 'array_long';
-    public const TYPE_CONSTANT    = 'constant';
-    public const TYPE_NULL        = 'null';
-    public const TYPE_ENUM        = 'enum';
-    public const TYPE_OBJECT      = 'object';
-    public const TYPE_OTHER       = 'other';
+    public const TYPE_ARRAY_LONG = 'array_long';
+    public const TYPE_CONSTANT = 'constant';
+    public const TYPE_NULL = 'null';
+    public const TYPE_ENUM = 'enum';
+    public const TYPE_OBJECT = 'object';
+    public const TYPE_OTHER = 'other';
     /**#@-*/
-
     public const OUTPUT_MULTIPLE_LINE = 'multipleLine';
-    public const OUTPUT_SINGLE_LINE   = 'singleLine';
-
+    public const OUTPUT_SINGLE_LINE = 'singleLine';
     /** @var mixed */
     protected $value;
-
     protected string $type = self::TYPE_AUTO;
-
-    protected int $arrayDepth = 0;
-
+    protected int $array_depth = 0;
     /** @var self::OUTPUT_* */
-    protected string $outputMode = self::OUTPUT_MULTIPLE_LINE;
-
-    protected array $allowedTypes = [];
-
+    protected string $output_mode = self::OUTPUT_MULTIPLE_LINE;
+    protected array $allowed_types = [];
     /**
      * Autodetectable constants
      *
      * @var SplArrayObject|StdlibArrayObject
      */
     protected $constants;
-
     /**
      * @param mixed                                 $value
      * @param string                                $type
      * @param self::OUTPUT_*                        $outputMode
      * @param null|SplArrayObject|StdlibArrayObject $constants
      */
-    public function __construct(
-        $value = null,
-        $type = self::TYPE_AUTO,
-        $outputMode = self::OUTPUT_MULTIPLE_LINE,
-        $constants = null
-    ) {
+    public function __construct($value = null, $type = self::TYPE_AUTO, $output_mode = self::OUTPUT_MULTIPLE_LINE, $constants = null)
+    {
         // strict check is important here if $type = AUTO
         if ($value !== null) {
-            $this->setValue($value);
+            $this->set_value($value);
         }
         if ($type !== self::TYPE_AUTO) {
-            $this->setType($type);
+            $this->set_type($type);
         }
-        if ($outputMode !== self::OUTPUT_MULTIPLE_LINE) {
-            $this->setOutputMode($outputMode);
+        if ($output_mode !== self::OUTPUT_MULTIPLE_LINE) {
+            $this->set_output_mode($output_mode);
         }
         if ($constants === null) {
-            $constants = new SplArrayObject();
-        } elseif (! ($constants instanceof SplArrayObject || $constants instanceof StdlibArrayObject)) {
-            throw new InvalidArgumentException(
-                '$constants must be an instance of ArrayObject or Laminas\Stdlib\ArrayObject'
-            );
+            $constants = new Spl_Array_Object();
+        } elseif (!($constants instanceof Spl_Array_Object || $constants instanceof Stdlib_Array_Object)) {
+            throw new InvalidArgumentException('$constants must be an instance of ArrayObject or Laminas\Stdlib\ArrayObject');
         }
         $this->constants = $constants;
     }
-
     /**
      * Init constant list by defined and magic constants
      *
@@ -118,23 +96,12 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      *             generate constant expressions. For such a functionality, consider using an AST-based
      *             code builder instead.
      */
-    public function initEnvironmentConstants(): void
+    public function init_environment_constants(): void
     {
-        $constants = [
-            '__DIR__',
-            '__FILE__',
-            '__LINE__',
-            '__CLASS__',
-            '__TRAIT__',
-            '__METHOD__',
-            '__FUNCTION__',
-            '__NAMESPACE__',
-            '::',
-        ];
-        $constants = array_merge($constants, array_keys(get_defined_constants()), $this->constants->getArrayCopy());
-        $this->constants->exchangeArray($constants);
+        $constants = ['__DIR__', '__FILE__', '__LINE__', '__CLASS__', '__TRAIT__', '__METHOD__', '__FUNCTION__', '__NAMESPACE__', '::'];
+        $constants = array_merge($constants, array_keys(get_defined_constants()), $this->constants->get_array_copy());
+        $this->constants->exchange_array($constants);
     }
-
     /**
      * Add constant to list
      *
@@ -146,13 +113,11 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      * @param string $constant
      * @return $this
      */
-    public function addConstant($constant): static
+    public function add_constant($constant): static
     {
         $this->constants->append($constant);
-
         return $this;
     }
-
     /**
      * Delete constant from constant list
      *
@@ -163,15 +128,13 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      *
      * @param string $constant
      */
-    public function deleteConstant($constant): bool
+    public function delete_constant($constant): bool
     {
-        if (($index = array_search($constant, $this->constants->getArrayCopy())) !== false) {
+        if (($index = array_search($constant, $this->constants->get_array_copy())) !== false) {
             $this->constants->offsetUnset($index);
         }
-
         return $index !== false;
     }
-
     /**
      * Return constant list
      *
@@ -182,120 +145,75 @@ class ValueGenerator extends AbstractGenerator implements Stringable
      *
      * @return SplArrayObject|StdlibArrayObject
      */
-    public function getConstants()
+    public function get_constants()
     {
         return $this->constants;
     }
-
-    public function isValidConstantType(): bool
+    public function is_valid_constant_type(): bool
     {
         if ($this->type === self::TYPE_AUTO) {
-            $type = $this->getAutoDeterminedType($this->value);
+            $type = $this->get_auto_determined_type($this->value);
         } else {
             $type = $this->type;
         }
-
-        $validConstantTypes = [
-            self::TYPE_ARRAY,
-            self::TYPE_ARRAY_LONG,
-            self::TYPE_ARRAY_SHORT,
-            self::TYPE_BOOLEAN,
-            self::TYPE_BOOL,
-            self::TYPE_NUMBER,
-            self::TYPE_INTEGER,
-            self::TYPE_INT,
-            self::TYPE_FLOAT,
-            self::TYPE_DOUBLE,
-            self::TYPE_STRING,
-            self::TYPE_CONSTANT,
-            self::TYPE_NULL,
-        ];
-
-        return in_array($type, $validConstantTypes);
+        $valid_constant_types = [self::TYPE_ARRAY, self::TYPE_ARRAY_LONG, self::TYPE_ARRAY_SHORT, self::TYPE_BOOLEAN, self::TYPE_BOOL, self::TYPE_NUMBER, self::TYPE_INTEGER, self::TYPE_INT, self::TYPE_FLOAT, self::TYPE_DOUBLE, self::TYPE_STRING, self::TYPE_CONSTANT, self::TYPE_NULL];
+        return in_array($type, $valid_constant_types);
     }
-
     /**
      * @param  mixed $value
      */
-    public function setValue($value): static
+    public function set_value($value): static
     {
         $this->value = $value;
         return $this;
     }
-
     /**
      * @return mixed
      */
-    public function getValue()
+    public function get_value()
     {
         return $this->value;
     }
-
     /**
      * @param  string $type
      */
-    public function setType($type): static
+    public function set_type($type): static
     {
         $this->type = (string) $type;
         return $this;
     }
-
-    public function getType(): string
+    public function get_type(): string
     {
         return $this->type;
     }
-
     /**
      * @param  int $arrayDepth
      */
-    public function setArrayDepth($arrayDepth): static
+    public function set_array_depth($array_depth): static
     {
-        $this->arrayDepth = (int) $arrayDepth;
+        $this->array_depth = (int) $array_depth;
         return $this;
     }
-
-    public function getArrayDepth(): int
+    public function get_array_depth(): int
     {
-        return $this->arrayDepth;
+        return $this->array_depth;
     }
-
     /**
      * @param  string $type
      */
-    protected function getValidatedType($type): string
+    protected function get_validated_type($type): string
     {
-        $types = [
-            self::TYPE_AUTO,
-            self::TYPE_BOOLEAN,
-            self::TYPE_BOOL,
-            self::TYPE_NUMBER,
-            self::TYPE_INTEGER,
-            self::TYPE_INT,
-            self::TYPE_FLOAT,
-            self::TYPE_DOUBLE,
-            self::TYPE_STRING,
-            self::TYPE_ARRAY,
-            self::TYPE_ARRAY_SHORT,
-            self::TYPE_ARRAY_LONG,
-            self::TYPE_CONSTANT,
-            self::TYPE_NULL,
-            self::TYPE_ENUM,
-            self::TYPE_OBJECT,
-            self::TYPE_OTHER,
-        ];
-
+        $types = [self::TYPE_AUTO, self::TYPE_BOOLEAN, self::TYPE_BOOL, self::TYPE_NUMBER, self::TYPE_INTEGER, self::TYPE_INT, self::TYPE_FLOAT, self::TYPE_DOUBLE, self::TYPE_STRING, self::TYPE_ARRAY, self::TYPE_ARRAY_SHORT, self::TYPE_ARRAY_LONG, self::TYPE_CONSTANT, self::TYPE_NULL, self::TYPE_ENUM, self::TYPE_OBJECT, self::TYPE_OTHER];
         if (in_array($type, $types)) {
             return $type;
         }
-
         return self::TYPE_AUTO;
     }
-
     /**
      * @param  mixed $value
      * @return string
      */
-    public function getAutoDeterminedType($value)
+    public function get_auto_determined_type($value)
     {
         switch (gettype($value)) {
             case 'boolean':
@@ -305,7 +223,6 @@ class ValueGenerator extends AbstractGenerator implements Stringable
                     if ($value === $constant) {
                         return self::TYPE_CONSTANT;
                     }
-
                     if (str_contains($value, (string) $constant)) {
                         return self::TYPE_CONSTANT;
                     }
@@ -320,56 +237,46 @@ class ValueGenerator extends AbstractGenerator implements Stringable
             case 'NULL':
                 return self::TYPE_NULL;
             case 'object':
-                if ($value instanceof UnitEnum) {
+                if ($value instanceof Unit_Enum) {
                     return self::TYPE_ENUM;
                 }
-                // enums are typed as objects, so this fall through is intentional
-                // no break
+            // enums are typed as objects, so this fall through is intentional
+            // no break
             case 'resource':
             case 'unknown type':
             default:
                 return self::TYPE_OTHER;
         }
     }
-
     /**
      * @throws Exception\RuntimeException
      */
     public function generate(): string
     {
         $type = $this->type;
-
         if ($type !== self::TYPE_AUTO) {
-            $type = $this->getValidatedType($type);
+            $type = $this->get_validated_type($type);
         }
-
         $value = $this->value;
-
         if ($type === self::TYPE_AUTO) {
-            $type = $this->getAutoDeterminedType($value);
+            $type = $this->get_auto_determined_type($value);
         }
-
-        $isArrayType = in_array($type, [self::TYPE_ARRAY, self::TYPE_ARRAY_LONG, self::TYPE_ARRAY_SHORT]);
-
-        if ($isArrayType) {
-            foreach ($value as &$curValue) {
-                if ($curValue instanceof self) {
+        $is_array_type = in_array($type, [self::TYPE_ARRAY, self::TYPE_ARRAY_LONG, self::TYPE_ARRAY_SHORT]);
+        if ($is_array_type) {
+            foreach ($value as &$cur_value) {
+                if ($cur_value instanceof self) {
                     continue;
                 }
-
-                if (is_array($curValue)) {
-                    $newType = $type;
+                if (is_array($cur_value)) {
+                    $new_type = $type;
                 } else {
-                    $newType = self::TYPE_AUTO;
+                    $new_type = self::TYPE_AUTO;
                 }
-
-                $curValue = new self($curValue, $newType, $this->outputMode, $this->getConstants());
-                $curValue->setIndentation($this->indentation);
+                $cur_value = new self($cur_value, $new_type, $this->output_mode, $this->get_constants());
+                $cur_value->set_indentation($this->indentation);
             }
         }
-
         $output = '';
-
         switch ($type) {
             case self::TYPE_BOOLEAN:
             case self::TYPE_BOOL:
@@ -393,69 +300,59 @@ class ValueGenerator extends AbstractGenerator implements Stringable
             case self::TYPE_ARRAY_LONG:
             case self::TYPE_ARRAY_SHORT:
                 if ($type === self::TYPE_ARRAY_LONG) {
-                    $startArray = 'array(';
-                    $endArray   = ')';
+                    $start_array = 'array(';
+                    $end_array = ')';
                 } else {
-                    $startArray = '[';
-                    $endArray   = ']';
+                    $start_array = '[';
+                    $end_array = ']';
                 }
-
-                $output .= $startArray;
-                if ($this->outputMode == self::OUTPUT_MULTIPLE_LINE) {
-                    $output .= self::LINE_FEED . str_repeat($this->indentation, $this->arrayDepth + 1);
+                $output .= $start_array;
+                if ($this->output_mode == self::OUTPUT_MULTIPLE_LINE) {
+                    $output .= self::LINE_FEED . str_repeat($this->indentation, $this->array_depth + 1);
                 }
-                $outputParts = [];
-                $noKeyIndex  = 0;
+                $output_parts = [];
+                $no_key_index = 0;
                 foreach ($value as $n => $v) {
                     /** @var ValueGenerator $v */
-                    $v->setArrayDepth($this->arrayDepth + 1);
-                    $partV = $v->generate();
+                    $v->set_array_depth($this->array_depth + 1);
+                    $part_v = $v->generate();
                     $short = false;
                     if (is_int($n)) {
-                        if ($n === $noKeyIndex) {
+                        if ($n === $no_key_index) {
                             $short = true;
-                            $noKeyIndex++;
+                            $no_key_index++;
                         } else {
-                            $noKeyIndex = max($n + 1, $noKeyIndex);
+                            $no_key_index = max($n + 1, $no_key_index);
                         }
                     }
-
                     if ($short) {
-                        $outputParts[] = $partV;
+                        $output_parts[] = $part_v;
                     } else {
-                        $outputParts[] = (is_int($n) ? $n : self::escape($n)) . ' => ' . $partV;
+                        $output_parts[] = (is_int($n) ? $n : self::escape($n)) . ' => ' . $part_v;
                     }
                 }
-                $padding = $this->outputMode == self::OUTPUT_MULTIPLE_LINE
-                    ? self::LINE_FEED . str_repeat($this->indentation, $this->arrayDepth + 1)
-                    : ' ';
-                $output .= implode(',' . $padding, $outputParts);
-                if ($this->outputMode == self::OUTPUT_MULTIPLE_LINE) {
-                    if (count($outputParts) > 0) {
+                $padding = $this->output_mode == self::OUTPUT_MULTIPLE_LINE ? self::LINE_FEED . str_repeat($this->indentation, $this->array_depth + 1) : ' ';
+                $output .= implode(',' . $padding, $output_parts);
+                if ($this->output_mode == self::OUTPUT_MULTIPLE_LINE) {
+                    if (count($output_parts) > 0) {
                         $output .= ',';
                     }
-                    $output .= self::LINE_FEED . str_repeat($this->indentation, $this->arrayDepth);
+                    $output .= self::LINE_FEED . str_repeat($this->indentation, $this->array_depth);
                 }
-                $output .= $endArray;
+                $output .= $end_array;
                 break;
             case self::TYPE_ENUM:
-                if (! is_object($value)) {
+                if (!is_object($value)) {
                     throw new Exception\RuntimeException('Value is not an object.');
                 }
-
                 $output = sprintf('\%s::%s', $value::class, (string) $value->name);
                 break;
             case self::TYPE_OTHER:
             default:
-                throw new Exception\RuntimeException(sprintf(
-                    'Type "%s" is unknown or cannot be used as property default value.',
-                    get_debug_type($value)
-                ));
+                throw new Exception\RuntimeException(sprintf('Type "%s" is unknown or cannot be used as property default value.', get_debug_type($value)));
         }
-
         return $output;
     }
-
     /**
      * Quotes value for PHP code.
      *
@@ -466,33 +363,28 @@ class ValueGenerator extends AbstractGenerator implements Stringable
     public static function escape($input, $quote = true): string
     {
         $output = addcslashes($input, "\\'");
-
         // adds quoting strings
         if ($quote) {
             return "'" . $output . "'";
         }
-
         return $output;
     }
-
     /**
      * @param  self::OUTPUT_* $outputMode
      * @return $this
      */
-    public function setOutputMode($outputMode): static
+    public function set_output_mode($output_mode): static
     {
-        $this->outputMode = (string) $outputMode;
+        $this->output_mode = (string) $output_mode;
         return $this;
     }
-
     /**
      * @return self::OUTPUT_*
      */
-    public function getOutputMode(): string
+    public function get_output_mode(): string
     {
-        return $this->outputMode;
+        return $this->output_mode;
     }
-
     public function __toString(): string
     {
         return $this->generate();

@@ -1,123 +1,91 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Laminas\Code\Generator;
 
 use function array_map;
 use function explode;
-
 use function implode;
 use function is_array;
 use function is_string;
-
-use Laminas\Code\Reflection\MethodReflection;
-
+use Laminas\Code\Reflection\Method_Reflection;
 use function preg_replace;
 use function sprintf;
 use function str_replace;
 use function str_starts_with;
-
 use Stringable;
-
 use function strlen;
 use function strtolower;
 use function substr;
 use function trim;
 use function uasort;
-
-class MethodGenerator extends AbstractMemberGenerator implements Stringable
+class Method_Generator extends Abstract_Member_Generator implements Stringable
 {
-    protected ?DocBlockGenerator $docBlock = null;
-
+    protected ?Doc_Block_Generator $doc_block = null;
     /** @var ParameterGenerator[] */
     protected array $parameters = [];
-
     protected string $body = '';
-
-    private ?TypeGenerator $returnType = null;
-
-    private bool $returnsReference = false;
-
-    public static function fromReflection(MethodReflection $reflectionMethod): self
+    private ?Type_Generator $return_type = null;
+    private bool $returns_reference = false;
+    public static function from_reflection(Method_Reflection $reflection_method): self
     {
-        $method = static::copyMethodSignature($reflectionMethod);
-
-        $method->setSourceContent($reflectionMethod->getContents(false));
-        $method->setSourceDirty(false);
-
-        if ($reflectionMethod->getDocComment() != '') {
-            $method->setDocBlock(DocBlockGenerator::fromReflection($reflectionMethod->getDocBlock()));
+        $method = static::copy_method_signature($reflection_method);
+        $method->set_source_content($reflection_method->get_contents(false));
+        $method->set_source_dirty(false);
+        if ($reflection_method->get_doc_comment() != '') {
+            $method->set_doc_block(Doc_Block_Generator::from_reflection($reflection_method->get_doc_block()));
         }
-
-        $method->setBody(static::clearBodyIndention($reflectionMethod->getBody()));
-
+        $method->set_body(static::clear_body_indention($reflection_method->get_body()));
         return $method;
     }
-
     /**
      * Returns a MethodGenerator based on a MethodReflection with only the signature copied.
      *
      * This is similar to fromReflection() but without the method body and phpdoc as this is quite heavy to copy.
      * It's for example useful when creating proxies where you normally change the method body anyway.
      */
-    public static function copyMethodSignature(MethodReflection $reflectionMethod): MethodGenerator
+    public static function copy_method_signature(Method_Reflection $reflection_method): Method_Generator
     {
-        $method         = new static();
-        $declaringClass = $reflectionMethod->getDeclaringClass();
-
-        $method->returnType = TypeGenerator::fromReflectionType($reflectionMethod->getReturnType(), $declaringClass);
-        $method->setFinal($reflectionMethod->isFinal());
-
-        if ($reflectionMethod->isPrivate()) {
-            $method->setVisibility(self::VISIBILITY_PRIVATE);
-        } elseif ($reflectionMethod->isProtected()) {
-            $method->setVisibility(self::VISIBILITY_PROTECTED);
+        $method = new static();
+        $declaring_class = $reflection_method->get_declaring_class();
+        $method->return_type = Type_Generator::from_reflection_type($reflection_method->get_return_type(), $declaring_class);
+        $method->set_final($reflection_method->is_final());
+        if ($reflection_method->is_private()) {
+            $method->set_visibility(self::VISIBILITY_PRIVATE);
+        } elseif ($reflection_method->is_protected()) {
+            $method->set_visibility(self::VISIBILITY_PROTECTED);
         } else {
-            $method->setVisibility(self::VISIBILITY_PUBLIC);
+            $method->set_visibility(self::VISIBILITY_PUBLIC);
         }
-
-        $method->setInterface($declaringClass->isInterface());
-        $method->setStatic($reflectionMethod->isStatic());
-        $method->setReturnsReference($reflectionMethod->returnsReference());
-        $method->setName($reflectionMethod->getName());
-
-        foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
-            $method->setParameter(
-                $reflectionParameter->isPromoted()
-                    ? PromotedParameterGenerator::fromReflection($reflectionParameter)
-                    : ParameterGenerator::fromReflection($reflectionParameter)
-            );
+        $method->set_interface($declaring_class->is_interface());
+        $method->set_static($reflection_method->is_static());
+        $method->set_returns_reference($reflection_method->returns_reference());
+        $method->set_name($reflection_method->get_name());
+        foreach ($reflection_method->get_parameters() as $reflection_parameter) {
+            $method->set_parameter($reflection_parameter->is_promoted() ? Promoted_Parameter_Generator::from_reflection($reflection_parameter) : Parameter_Generator::from_reflection($reflection_parameter));
         }
-
         return $method;
     }
-
     /**
      * Identify the space indention from the first line and remove this indention
      * from all lines
      *
      * @param string $body
      */
-    protected static function clearBodyIndention($body): string
+    protected static function clear_body_indention($body): string
     {
         if (empty($body)) {
             return $body;
         }
-
         $lines = explode("\n", $body);
-
         $indention = str_replace(trim($lines[1]), '', $lines[1]);
-
         foreach ($lines as $key => $line) {
             if (str_starts_with($line, $indention)) {
                 $lines[$key] = substr($line, strlen($indention));
             }
         }
-
         return implode("\n", $lines);
     }
-
     /**
      * Generate from array
      *
@@ -137,57 +105,52 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
      * @configkey visibility       string
      * @throws Exception\InvalidArgumentException
      */
-    public static function fromArray(array $array): static
+    public static function from_array(array $array): static
     {
-        if (! isset($array['name'])) {
-            throw new Exception\InvalidArgumentException(
-                'Method generator requires that a name is provided for this object'
-            );
+        if (!isset($array['name'])) {
+            throw new Exception\InvalidArgumentException('Method generator requires that a name is provided for this object');
         }
-
         $method = new static($array['name']);
         foreach ($array as $name => $value) {
             // normalize key
             switch (strtolower(str_replace(['.', '-', '_'], '', $name))) {
                 case 'docblock':
-                    $docBlock = $value instanceof DocBlockGenerator ? $value : DocBlockGenerator::fromArray($value);
-                    $method->setDocBlock($docBlock);
+                    $doc_block = $value instanceof Doc_Block_Generator ? $value : Doc_Block_Generator::from_array($value);
+                    $method->set_doc_block($doc_block);
                     break;
                 case 'flags':
-                    $method->setFlags($value);
+                    $method->set_flags($value);
                     break;
                 case 'parameters':
-                    $method->setParameters($value);
+                    $method->set_parameters($value);
                     break;
                 case 'body':
-                    $method->setBody($value);
+                    $method->set_body($value);
                     break;
                 case 'abstract':
-                    $method->setAbstract($value);
+                    $method->set_abstract($value);
                     break;
                 case 'final':
-                    $method->setFinal($value);
+                    $method->set_final($value);
                     break;
                 case 'interface':
-                    $method->setInterface($value);
+                    $method->set_interface($value);
                     break;
                 case 'static':
-                    $method->setStatic($value);
+                    $method->set_static($value);
                     break;
                 case 'visibility':
-                    $method->setVisibility($value);
+                    $method->set_visibility($value);
                     break;
                 case 'returntype':
-                    $method->setReturnType($value);
+                    $method->set_return_type($value);
                     break;
                 case 'returnsreference':
-                    $method->setReturnsReference((bool) $value);
+                    $method->set_returns_reference((bool) $value);
             }
         }
-
         return $method;
     }
-
     /**
      * @param  ?string                              $name
      * @param ParameterGenerator[]|array[]|string[] $parameters
@@ -195,190 +158,133 @@ class MethodGenerator extends AbstractMemberGenerator implements Stringable
      * @param  ?string                              $body
      * @param DocBlockGenerator|string|null         $docBlock
      */
-    public function __construct(
-        $name = null,
-        array $parameters = [],
-        $flags = self::FLAG_PUBLIC,
-        $body = null,
-        $docBlock = null
-    ) {
+    public function __construct($name = null, array $parameters = [], $flags = self::FLAG_PUBLIC, $body = null, $doc_block = null)
+    {
         if ($name) {
-            $this->setName($name);
+            $this->set_name($name);
         }
         if ($parameters) {
-            $this->setParameters($parameters);
+            $this->set_parameters($parameters);
         }
         if ($flags !== self::FLAG_PUBLIC) {
-            $this->setFlags($flags);
+            $this->set_flags($flags);
         }
         if ($body) {
-            $this->setBody($body);
+            $this->set_body($body);
         }
-        if ($docBlock) {
-            $this->setDocBlock($docBlock);
+        if ($doc_block) {
+            $this->set_doc_block($doc_block);
         }
     }
-
     /**
      * @param  ParameterGenerator[]|array[]|string[] $parameters
      */
-    public function setParameters(array $parameters): static
+    public function set_parameters(array $parameters): static
     {
         foreach ($parameters as $parameter) {
-            $this->setParameter($parameter);
+            $this->set_parameter($parameter);
         }
-
-        $this->sortParameters();
-
+        $this->sort_parameters();
         return $this;
     }
-
     /**
      * @param  ParameterGenerator|array|string $parameter
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameter($parameter): static
+    public function set_parameter($parameter): static
     {
         if (is_string($parameter)) {
-            $parameter = new ParameterGenerator($parameter);
+            $parameter = new Parameter_Generator($parameter);
         }
-
         if (is_array($parameter)) {
-            $parameter = ParameterGenerator::fromArray($parameter);
+            $parameter = Parameter_Generator::from_array($parameter);
         }
-
-        if (! $parameter instanceof ParameterGenerator) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s is expecting either a string, array or an instance of %s\ParameterGenerator',
-                __METHOD__,
-                __NAMESPACE__
-            ));
+        if (!$parameter instanceof Parameter_Generator) {
+            throw new Exception\InvalidArgumentException(sprintf('%s is expecting either a string, array or an instance of %s\ParameterGenerator', __METHOD__, __NAMESPACE__));
         }
-
-        $this->parameters[$parameter->getName()] = $parameter;
-
-        $this->sortParameters();
-
+        $this->parameters[$parameter->get_name()] = $parameter;
+        $this->sort_parameters();
         return $this;
     }
-
     /**
      * @return ParameterGenerator[]
      */
-    public function getParameters(): array
+    public function get_parameters(): array
     {
         return $this->parameters;
     }
-
-    public function setBody(string $body): static
+    public function set_body(string $body): static
     {
         $this->body = $body;
         return $this;
     }
-
-    public function getBody(): string
+    public function get_body(): string
     {
         return $this->body;
     }
-
     /**
      * @param string|null $returnType
      */
-    public function setReturnType($returnType = null): static
+    public function set_return_type($return_type = null): static
     {
-        $this->returnType = null === $returnType
-            ? null
-            : TypeGenerator::fromTypeString($returnType);
-
+        $this->return_type = null === $return_type ? null : Type_Generator::from_type_string($return_type);
         return $this;
     }
-
-    public function getReturnType(): ?\Laminas\Code\Generator\TypeGenerator
+    public function get_return_type(): ?\Laminas\Code\Generator\Type_Generator
     {
-        return $this->returnType;
+        return $this->return_type;
     }
-
     /**
      * @param bool $returnsReference
      */
-    public function setReturnsReference($returnsReference): static
+    public function set_returns_reference($returns_reference): static
     {
-        $this->returnsReference = (bool) $returnsReference;
-
+        $this->returns_reference = (bool) $returns_reference;
         return $this;
     }
-
-    public function returnsReference(): bool
+    public function returns_reference(): bool
     {
-        return $this->returnsReference;
+        return $this->returns_reference;
     }
-
     /**
      * Sort parameters by their position
      */
-    private function sortParameters(): void
+    private function sort_parameters(): void
     {
-        uasort(
-            $this->parameters,
-            static fn (ParameterGenerator $item1, ParameterGenerator $item2): int
-                => $item1->getPosition() <=> $item2->getPosition()
-        );
+        uasort($this->parameters, static fn(Parameter_Generator $item1, Parameter_Generator $item2): int => $item1->get_position() <=> $item2->get_position());
     }
-
     public function generate(): string
     {
         $output = '';
-
-        $indent = $this->getIndentation();
-
-        if (($docBlock = $this->getDocBlock()) !== null) {
-            $docBlock->setIndentation($indent);
-            $output .= $docBlock->generate();
+        $indent = $this->get_indentation();
+        if (($doc_block = $this->get_doc_block()) !== null) {
+            $doc_block->set_indentation($indent);
+            $output .= $doc_block->generate();
         }
-
         $output .= $indent;
-
-        if ($this->isAbstract()) {
+        if ($this->is_abstract()) {
             $output .= 'abstract ';
         } else {
-            $output .= $this->isFinal() ? 'final ' : '';
+            $output .= $this->is_final() ? 'final ' : '';
         }
-
-        $output .= $this->getVisibility()
-            . ($this->isStatic() ? ' static' : '')
-            . ' function '
-            . ($this->returnsReference ? '& ' : '')
-            . $this->getName() . '(';
-
-        $output .= implode(', ', array_map(
-            static fn (ParameterGenerator $parameter): string => $parameter->generate(),
-            $this->getParameters()
-        ));
-
+        $output .= $this->get_visibility() . ($this->is_static() ? ' static' : '') . ' function ' . ($this->returns_reference ? '& ' : '') . $this->get_name() . '(';
+        $output .= implode(', ', array_map(static fn(Parameter_Generator $parameter): string => $parameter->generate(), $this->get_parameters()));
         $output .= ')';
-
-        if ($this->returnType) {
-            $output .= ': ' . $this->returnType->generate();
+        if ($this->return_type) {
+            $output .= ': ' . $this->return_type->generate();
         }
-
-        if ($this->isAbstract()) {
+        if ($this->is_abstract()) {
             return $output . ';';
         }
-
-        if ($this->isInterface()) {
+        if ($this->is_interface()) {
             return $output . ';';
         }
-
         $output .= self::LINE_FEED . $indent . '{' . self::LINE_FEED;
-
         if ($this->body) {
-            $output .= preg_replace('#^((?![a-zA-Z0-9_-]+;).+?)$#m', $indent . $indent . '$1', trim($this->body))
-                . self::LINE_FEED;
+            $output .= preg_replace('#^((?![a-zA-Z0-9_-]+;).+?)$#m', $indent . $indent . '$1', trim($this->body)) . self::LINE_FEED;
         }
-
         return $output . ($indent . '}' . self::LINE_FEED);
     }
-
     public function __toString(): string
     {
         return $this->generate();
