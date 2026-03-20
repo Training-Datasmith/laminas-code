@@ -40,7 +40,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "LaminasTest\\Code\\": "test/"
+            "Laminas_Test\\Code\\": "test/"
         }
     },
     "scripts": {
